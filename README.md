@@ -1,6 +1,7 @@
 # plasmo-co-learn
 
-本次共学使用 [plasmo](https://docs.plasmo.com/) 完成一个浏览器扩展。
+本次共学使用 [plasmo](https://docs.plasmo.com/) 完成一个浏览器扩展。构建独立自主的轻量web3接入解决方案。
+一种web3接入方案，比纯客户端轻量，比纯网页丰富，介于两者之间的一种web3 接入方案。
 
 ## 前置需求
 
@@ -42,6 +43,7 @@
 
 参考资料：
 
-1. <https://docs.plasmo.com/>
-2. <https://developer.chrome.com/docs/extensions/mv3/>
-3. <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions>
+1. plasmo 官方文档 <https://docs.plasmo.com/>
+2. 使用 plasmo的参考示例<https://github.com/PlasmoHQ/plasmo/network/dependents> 
+3. google Chrome 模块开发文档 <https://developer.chrome.com/docs/extensions/mv3/>
+4. 火狐浏览器扩展开发文档 <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions>
