@@ -2,6 +2,12 @@
 
 本次共学使用plasmo 完成一个浏览器扩展。
 
+## 前置需求
+
+1. 熟悉至少一种编程语言
+2. 熟悉至少一种前端架构 : React, Vue 等
+3. 熟悉 pnpm, yarn ，npx 等前端操作工具链
+
 ## module1
 
 1. 环境搭建，浏览器扩展各个模块
@@ -25,5 +31,13 @@
 2. message
 3. storage
 4. remote code
+
+## module5
+
+项目周，项目举例
+
+1. TODO 项目管理，在浏览器的环境完成TODO 项目管理。
+2. 加密钱包项目 (sui，aptos,solana)等
+3. 网页增强工具 (增强github 加入和gpt 的交互)等
 
 参考资料： <https://docs.plasmo.com/> -->
