@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkplasmo_co_learn=self.webpackChunkplasmo_co_learn||[]).push([[6026],{3101:o=>{o.exports=JSON.parse('{"permalink":"/plasmo-co-learn/blog/tags/facebook","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
