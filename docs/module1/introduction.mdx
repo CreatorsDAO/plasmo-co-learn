@@ -12,8 +12,47 @@ sidebar_position: 3
 ## `plasmo` 提供什么？
 
 1. [Plasmo Framework](https://docs.plasmo.com/#plasmo-framework) 是我们提供的一个核心开发框架。
-   通过他可以帮你快速编写代码，**_无需担心浏览器扩展的复杂性_** 。
+   通过他可以帮你快速编写应用代码，**_无需担心浏览器扩展的复杂性_** 。
 2. [Itero TestBed](https://docs.plasmo.com/#itero-testbed) 这是一个测试扩展暂存平台。
    通过他，你可以尽可能的扩大你的测试人群，**_在真实的环境中测试你的浏览器扩展_**。
 3. [PBB 打包工具](https://docs.plasmo.com/#plasmo-browser-platform-publisher) 他是一个 github 的 action 集合。
    他工作在你的扩展的发布阶段。通过他，你可以和 github 的 workflow 结合在一起，将你的扩展发布到各个浏览器商店，**_极大的简化你的产品发布流程_**。
+
+## Plasmo Framework
+
+使用 `Plasmo` 框架开发浏览器扩展需要分几步呢？ 分三步!!
+
+1. 使用 `pnpm` 初始化 `Plasmo Framework` 及应用框架
+2. 像写前端组件一样，构建应用的功能，Export 组件
+3. run dev 或者 build
+
+没错!! `Plasmo` 帮你完成了所有的繁杂工作，自动为你实现其余的所有细节！
+与此同时，`Plasmo` 为 Typescript、React、Preact、Svelte 和 Vue 提供一流的支持，你可以尽你想象的使用 UI 框架。
+比如 [Tailwindcss](https://docs.plasmo.com/quickstarts/with-tailwindcss), [Daisyui](https://daisyui.com/)。
+
+开发阶段通过内置的 `React HMR`, 你可以 **_ 实时调试你的浏览器扩展_**, 就像开发普通的 web 应用程序一模一样。
+
+借助庞大的 存储和消息传递机制，以及对 env 的支持，Plasmo 帮你完成了浏览器之间的兼容性，做到 **_一次编写，多处运行_** .
+
+目前支持的浏览器如下: <https://docs.plasmo.com/framework/workflows/build#with-a-specific-target>
+
+## Itero TestBed
+
+`Itero` 提供一个测试扩展缓存区，你可以在 [Itero](https://itero.plasmo.com/) 完成注册，上传 build 好的扩展文件。
+接下来 `Itero` 帮你完成浏览器扩展的分发，直达测试用户。
+
+`Itero` 提供如下的功能:
+
+- 更新完成后直达测试用户
+- Github 结合
+- 自动化的版本识别
+
+:::tip
+Itero 为收费功能,请在需要的时候使用。😄
+:::
+
+## PBB
+
+这里是关于浏览器扩展发布的。`Plasmo` 提供了一个 Github Action。
+<https://github.com/marketplace/actions/browser-platform-publisher> 通过相关的配置和管理，
+你可以通过 Githut 一键发布你的浏览器扩展。
