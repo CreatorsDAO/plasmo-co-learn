@@ -1,8 +1,4 @@
 {
-  "label": "Module4",
-  "position": 5,
-  "link": {
-    "type": "generated-index",
-    "description": "5 minutes to learn the most important Docusaurus concepts."
-  }
+  "label": "外部通信",
+  "position": 5
 }
