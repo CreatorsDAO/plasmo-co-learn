@@ -24,7 +24,7 @@ const FeatureList = [
   //   ),
   // },
   {
-    title: "Powered by 706",
+    title: "Powered by CreatorsDAO",
     Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
     description: <></>,
   },
