@@ -14,19 +14,191 @@ sidebar_position: 5
 
 ## 项目创建
 
+项目创建可以使用 `React` 提供的 (create-react-app)[https://create-react-app.dev/]脚手架。
+或者，你也可使用[vite](https://vitejs.dev/guide/) 两种方式来完成项目的初始化。
+
 ```shell
-pnpm create-react-app
-vite
+npx create-react-app my-app
+pnpm create vite
 ```
 
-## 基础路由
+使用 `vite`初始化的时候，记得选择`React`的 `Typescript` 项目。
 
-react-router
+:::tip
+如果你懒得折腾本地的环境，或者想拥有一个随时随地编辑的云端项目，你可以尝试 [stackblitz](https://stackblitz.com/), 这里有丰富的前端资源。
+:::
+
+## 基本组件
+
+项目初始化完成后的文件大体结构类似，我们拿一个 `vite` 创建的 react 项目举例。
+
+```shell
+.
+├── README.md
+├── index.html
+├── package.json
+├── public
+│   └── vite.svg
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets
+│   │   └── react.svg
+│   ├── index.css
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+```
+
+src 内部一般会有一个隐藏的主入口文件 这里是 main.tsx
+
+```Typescript
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+```
+
+大多数 React 项目依赖于核心类库`ReactDOM`,他也是`React`框架的一部分。 App.tsx 中定义自己的应用组件。
+通过 `ReactDOM.createRoot` 创建一个 `React` 结构，把后续的 React 组件挂载到 html dom 中，完成 UI 展示。
+
+App 组件的代码在 App.tsx 中
+
+```Typescript
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <>
+      <div>
+        <a href="https://vitejs.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+    </>
+  )
+}
+
+export default App
+```
+
+这个文件 通过 export 对外到处一个 函数组件，这个函数组件返回了一个 React Dom 结构。
+你应该看着很眼熟，内部基本上是类似 HTML 代码的模版结构。
 
 ## 组件参数
 
-params
+类似上边介绍的 App 组件，他在 main.tsx 中通过 HTML 标签的方式使用。那么怎么传递参数呢？
+这个参数放在函数式组件的第一个参数 props,并且位置不可变。
 
-## 状态存储
+```Typescript
+function Example(props: any) {
+  return (
+    <p>{props.msg}</p>
+  )
+}
 
-useState jotai
+export default Example;
+```
+
+以上定义了一个 Example 组件，接受任意类型的参数。
+
+:::tip
+Typescript 中类型不好标识，或者懒得设置的时候，可以使用 any 代替。 😄
+:::
+
+使用方法也很简单。按需引入以后，直接使用 Example 标签即可。
+
+```Typescript
+<Example msg="hello world"/>
+```
+
+## 组件 hook
+
+函数式组件，通过 useXXX 的方式，可以完成事件的相关绑定。
+
+这里介绍两个重要的 hook:
+
+- [useState](https://legacy.reactjs.org/docs/hooks-state.html)
+
+用来做组件内的状态存储。
+
+```Typescript
+function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+```
+
+useState 接受一个参数，用来做状态数据的初始化，返回两个值。
+
+1. 一个值作为当前 state 的变量名(比如以上的 count)，可以注入到返回的模版中，也可以在代码中使用。
+2. 另一个是状态变更的回调 (比如以上的 setCount) ,组件中可通过事件的处理比如 onClick 调用回调，改变组件状态。
+
+- [useEffect](https://legacy.reactjs.org/docs/hooks-reference.html#useeffect)
+
+这个相对复杂一些，标识当关注的状态变更的时候执行的业务逻辑。
+
+```Typescript
+function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
+
+  useEffect(function(){
+    console.log(count);
+  },[count])
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+```
+
+以上的代码表示，当状态数据 count 变更的时候，触发执行的逻辑。
+如果关注的状态 count 为空，则表示，在组件加载的时候执行一次，可以理解为 onload。
+
+## 路由组件
+
+React 的一大场景是构建 SPA 应用(单页面应用)。这时候组件切换即成为一个问题。推荐大家使用
+
+[react router](https://reactrouter.com/en/main) 来完成组件间的数据切换。
+
+## 状态保存
+
+单组件的状态可以使用 useState 来做，跨组件状态推荐使用 [jotai](https://jotai.org/) 来做。

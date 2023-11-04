@@ -19,4 +19,4 @@ sidebar_position: 1
 
 1. 熟悉至少一种编程语言
 2. 熟悉至少一种前端架构 : [React](https://react.dev/), [Vue](https://vuejs.org/guide/introduction.html) 等
-3. 熟悉 [pnpm](https://pnpm.io/), [yarn](https://yarnpkg.com/cli)  等前端操作工具链
+3. 熟悉 [pnpm](https://pnpm.io/), [yarn](https://yarnpkg.com/cli),[npx](https://www.npmjs.com/package/npx) 等前端操作工具链
