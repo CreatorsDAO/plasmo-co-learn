@@ -20,3 +20,10 @@ sidebar_position: 1
 1. 熟悉至少一种编程语言
 2. 熟悉至少一种前端架构 : [React](https://react.dev/), [Vue](https://vuejs.org/guide/introduction.html) 等
 3. 熟悉 [pnpm](https://pnpm.io/), [yarn](https://yarnpkg.com/cli),[npx](https://www.npmjs.com/package/npx) 等前端操作工具链
+
+## 参考资料
+
+1. `plasmo` 官方文档 <https://docs.plasmo.com/>
+2. 使用 `plasmo` 的参考示例<https://github.com/PlasmoHQ/plasmo/network/dependents> 
+3. `google Chrome` 模块开发文档 <https://developer.chrome.com/docs/extensions/mv3/>
+4. `Firefox` 扩展开发文档 <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions>
