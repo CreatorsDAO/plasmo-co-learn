@@ -3,3 +3,91 @@ sidebar_position: 3
 ---
 
 # 开发工作流
+
+这里主要介绍使用 `plasmo` 开发浏览器扩展的工作流。
+
+## 创建项目
+
+通过如下的命令创建 `plasmo` 项目：
+
+```shell
+pnpm create plasmo
+# OR
+yarn create plasmo
+# OR
+npm create plasmo
+```
+
+如果，跳过名字的提示，添加一个扩展的名字即可:
+
+```shell
+pnpm create plasmo "My Awesome Extension"
+# OR
+yarn create plasmo "My Awesome Extension"
+# OR
+npm create plasmo "My Awesome Extension"
+```
+
+:::tip
+你也可以把 `plasmo` 安装为全局的对象 `pnpm i -g plasmo`。
+:::
+
+### 使用 `src` 作为源码目录
+
+默认情况下，`plasmo` 使用当前项目的文件夹作为代码根目录。 创建项目的时候，使用 --with-src 参数即可
+
+```shell
+pnpm create plasmo --with-src
+# OR
+yarn create plasmo --with-src
+# OR
+npm create plasmo --with-src
+```
+
+如果你的项目已经创建好了，请按照如下的操作:
+
+1. 把所有的源码复制到 `src` 目录。
+   然后修改 `tsconfig.json` ： 原来指向 `~*` ，改为 `./src/*`
+2. 修改 配置文件源码部分:
+
+```shell
+{
+  "extends": "plasmo/templates/tsconfig.base",
+  "exclude": ["node_modules"],
+  "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
+  "compilerOptions": {
+    "paths": {
+      "~*": ["./src/*"]
+    },
+    "baseUrl": "."
+  }
+}
+```
+
+### 指定入口文件
+
+默认的入口文件为 [popup](https://docs.plasmo.com/framework/ext-pages#adding-a-popup-page)。
+你可以使用 --entry 设置不同的入口。
+这里列出了`plasmo` 支持的 [entries](https://github.com/PlasmoHQ/plasmo/tree/main/packages/init/entries)。
+
+```shell
+pnpm create plasmo --entry=options,newtab,contents/inline
+# OR
+npm create plasmo -- --entry=options,newtab,contents/inline
+```
+
+:::tip
+npm 不支持 向他的子命令直接传递参数，需要使用 -- 转移传递的参数。
+:::
+
+### 使用模板文件
+
+plasmo 官方提供了一个 [模板列表](https://github.com/PlasmoHQ/examples/)。可以选择不同的模板类型初始化:
+
+```shell
+pnpm create plasmo --with-env
+# OR
+npm create plasmo -- --with-env
+```
+
+## Development Sever
