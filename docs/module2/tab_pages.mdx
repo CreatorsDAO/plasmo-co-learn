@@ -2,4 +2,50 @@
 sidebar_position: 5
 ---
 
-# tab pages
+# Tab Pages
+
+这是 `plasmo` 独特的一个功能。不同于 扩展内置页面， `Tab Pages` 只是打包到浏览器扩展中的的常规的页面。
+扩展，可以跳转到任意的页面，当然你也可以自己路由到相关页面。
+
+## 使用场景
+
+1. 第一次安装扩展的时候，展示的页面
+2. 一个独立的认证页面
+3. 当你需要一个更加精准独立的导航时
+
+## 两个实例
+
+1. [with-tabs](https://github.com/PlasmoHQ/examples/tree/main/with-tabs)
+2. [rfc-182-tabs](https://github.com/PlasmoHQ/plasmo-test/tree/main/rfc/rfc-182-tabs)
+
+## 使用方法
+
+1. 在 `plasmo` 目录创建 `tabs` 目录
+2. 创建 `${name}.tsx` 文件， 最终会生成 `${name}.html` 文件
+3. 在 tsx 中导出 `React dom` 元素
+
+比如 你创建了 tabs/delta-flyer.tsx
+
+```typescript
+function DeltaFlyerPage() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        padding: 16,
+      }}
+    >
+      <h2>Delta Flyer Tab</h2>
+
+      <p>This tab is only available on the Delta Flyer page.</p>
+    </div>
+  );
+}
+
+export default DeltaFlyerPage;
+```
+
+最终将生成 `chrome-extension://$id/tabs/delta-flyer.html` 样子的 html 页面 。
+
+![tab pate](./tabpage.jpg)
