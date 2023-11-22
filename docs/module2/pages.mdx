@@ -2,10 +2,51 @@
 sidebar_position: 4
 ---
 
-# Pages
+# 浏览器内置页面
 
-## extension pages
+浏览器扩展包含几个内置页面，完成浏览器扩展本身的行为。他们包括以下几种 :
 
-## tab pages
+:::tip
+开发内置页面的时候，请确保手工刷新浏览器扩展资源。因为，他们的运行环境，没有监听 `web socket` 的变化。
+:::
 
-## sandbox pages
+### Popup Page
+
+`Popup Page` 是我们开发浏览器扩展接触的第一个页面，他可以在用户点击浏览器扩展 icon 的时候弹出，触发。
+在 `plasmo` 目录创建 `popup.tsx` 或者 `popup/index.tsx` 。
+其中导出的 `React dom`结构，会展示到 `Popup Page`。
+
+[参考示例 with-popup](https://github.com/PlasmoHQ/examples/tree/main/with-popup)
+
+### Options Page
+
+`Options Page` 一般用于扩展本身的配置，右键点击扩展 icon ，选择 选项，将打开对应的页面。
+在 `plasmo` 目录创建 `options.tsx` 或者 `options/index.tsx` 。
+其中导出的 `React dom`结构，会展示到 `Options Page`。
+
+[参考示例 with-options](https://github.com/PlasmoHQ/examples/tree/main/with-options-ui)
+
+### New Tab Page
+
+这个页面是在浏览器中新建 Tab 页面的时候，出现的默认页面。
+有些浏览器会展示默认的页面，默认首页 等。
+
+:::tip
+各个 扩展之间的 这个选项会互相覆盖。
+:::
+
+在 `plasmo` 目录创建 `newtab.tsx` 或者 `newtab/index.tsx` 。
+其中导出的 `React dom`结构，会展示到 ` New Tab Page`。
+
+[参考示例 with-newtab](https://github.com/PlasmoHQ/examples/tree/main/with-newtab)
+
+### Dev Tools Page
+
+这个页面会在浏览器调试 Panel 中展示。
+在 `plasmo` 目录创建 `devtools.tsx` 或者 `devtools/index.tsx` 。
+
+:::tip
+这个和其他内置页面不太一样。创建 panlel 可能 需要 `chrome.devtools` 的相关 API 。
+:::
+
+[参考示例 with-devtools](https://github.com/PlasmoHQ/examples/tree/main/with-devtools)
