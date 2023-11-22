@@ -152,3 +152,72 @@ plasmo dev --no-source-maps
 plasmo dev --serve-host=localhost --serve-port-1012
 plasmo dev --hmr-host=localhost --hmr-port=1815
 ```
+
+## 发布一个产品包
+
+### 常规的 `build`
+
+产品包 `build` 命令
+
+```shell
+pnpm build
+# OR
+npm run build
+```
+
+生成 zip 包
+
+```shell
+pnpm package
+# OR
+npm run package
+```
+
+以上两步也可以合成一步
+
+```shell
+pnpm build --zip
+# OR
+npm run build -- --zip
+```
+
+### 设置目标
+
+同 dev 一样，你可以使用 `--target` 设置目标
+
+```shell
+plasmo build --target=firefox-mv2
+```
+
+[支持列表](https://docs.plasmo.com/framework/workflows/faq#what-are-the-officially-supported-browser-targets)
+
+### 添加自定义 tag
+
+```shell
+plasmo build --tag=staging
+```
+
+将会生成 `build/chrome-mv3-staging` 目录。
+
+### 去掉 source maps
+
+```shell
+plasmo build --source-maps
+```
+
+### 其他优化
+
+关闭 minification (一种代码压缩技术)
+
+```shell
+plasmo build --no-minify
+```
+
+启用 `hoisting` 的技术。
+在 JavaScript 和浏览器扩展开发中，hoisting 指的是提升模块依赖项的过程，使得被多个文件共同依赖的模块只需要加载一次。
+
+```shell
+plasmo build --hoist
+```
+
+以上的两个参数，可以组合使用。
