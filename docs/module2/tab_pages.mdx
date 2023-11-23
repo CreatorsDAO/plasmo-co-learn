@@ -52,6 +52,8 @@ export default DeltaFlyerPage;
 
 :::tip
 tabs 页面不能使用 window.open 跳转。需要使用和 `Background` 的方式来由`Background` 打开。
+同时 chrome.tabs.create 只可以打开 本扩展内部的页面，和其他标准的 url。
+对于一些 敏感页面，比如 `chrome://extensions/` 通常会打开失败。这也是,chrome 的安全策略。
 :::
 
 一种处理方式如下
