@@ -49,3 +49,26 @@ export default DeltaFlyerPage;
 最终将生成 `chrome-extension://$id/tabs/delta-flyer.html` 样子的 html 页面 。
 
 ![tab pate](./tabpage.jpg)
+
+:::tip
+tabs 页面不能使用 window.open 跳转。需要使用和 `Background` 的方式来由`Background` 打开。
+:::
+
+一种处理方式如下
+
+```typescript
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "openPage") {
+    chrome.tabs.create({ url: message.url });
+  }
+});
+```
+
+前端调用代码
+
+```typescript
+chrome.runtime.sendMessage({
+  action: "openPage",
+  url: "tabs/delta-flyer.html",
+});
+```
