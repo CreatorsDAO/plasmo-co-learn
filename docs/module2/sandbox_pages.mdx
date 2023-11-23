@@ -3,3 +3,81 @@ sidebar_position: 6
 ---
 
 # sandbox pages
+
+## 简单说明
+
+`Sandbox Pages` 是一种特殊的扩展页面，他区别于整体的 CSP 限制。
+比如，你可以在其中执行 `eval` 的相关代码逻辑，而不影响整个的安全环境。
+使用`Sandbox Pages` 执行相关代码，你将获得更高的优先级和更安全的隔离环境。
+
+## 使用实例
+
+通常，一个`Sandbox Page` 会挂载到一个 `Content Script UI`页面结构中。
+下边的一个实例 展示了如何 使用`Sandbox Pages` 执行 `eval` 的系统调用，并将消息返回给调用内容。
+整个内容使用的 `chrome.message` 机制进行通信。
+
+### 创建一个 `Sandbox Page`
+
+1. 路径为 `plasmo` 目录下的 `sandbox.ts` 或者 `sandbox/<name>.ts`。
+2. 导出如下的代码:
+
+```typescript title=sandbox.ts
+export const life = 42;
+
+window.addEventListener("message", async function (event) {
+  const source = event.source as {
+    window: WindowProxy;
+  };
+
+  source.window.postMessage(eval(event.data), event.origin);
+});
+```
+
+以上代码，在页面中，监听 `message` 事件。当触发的时候,使用 eval 执行 event.data 中的代码。
+然后 ，发回给调用的页面
+
+### 调用方页面
+
+这里使用一个 `popup` 作为调用
+
+```typescript title=popup.tsx
+import { useEffect, useRef, useState } from "react";
+
+function IndexPopup() {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    window.addEventListener("message", (event) => {
+      console.log("EVAL output: " + event.data);
+    });
+  }, []);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        padding: 16,
+      }}
+    >
+      <button
+        onClick={() => {
+          iframeRef.current.contentWindow.postMessage("10 + 20", "*");
+        }}
+      >
+        Trigger iframe eval
+      </button>
+      <iframe src="sandbox.html" ref={iframeRef} style={{ display: "none" }} />
+    </div>
+  );
+}
+
+export default IndexPopup;
+```
+
+这个页面把 `sandbox` 的内容，作为一个 iframe 加载到其中，自然也就把 上下文安全的隔离开了。
+点击按钮的时候，向 `iframe` 指向的页面 `sandbox.html` 发送消息。
+
+同时，`popup` 为了接受返回的消息，还需要注册一个 `message` 事件。
+
+双方通过 `message` 完成了，安全、隔离的上下文执行和通信。

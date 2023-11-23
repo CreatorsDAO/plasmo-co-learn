@@ -71,10 +71,15 @@ const config = {
           {
             type: "docSidebar",
             sidebarId: "tutorialSidebar",
-            position: "left",
+
             label: "Learn Plasmo Now",
           },
           { to: "/blog", label: "Blog", position: "left" },
+          {
+            href: "https://docs.plasmo.com/",
+            label: "Plasmo",
+            position: "right",
+          },
           {
             href: "https://github.com/CreatorsDAO/plasmo-co-learn",
             label: "GitHub",
