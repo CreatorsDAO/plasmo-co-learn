@@ -1,5 +1,9 @@
 # plasmo-co-learn
 
+
+<img src="static/img/logo.png" width="360" height="360">
+
+
 本次共学使用 [plasmo](https://docs.plasmo.com/) 完成一个浏览器扩展。构建独立自主的轻量web3接入解决方案。
 一种web3接入方案，比纯客户端轻量，比纯网页丰富，介于两者之间的一种web3 接入方案。
 
