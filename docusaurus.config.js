@@ -8,7 +8,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 const config = {
   title: "Plasmo-Co-Learn",
   tagline: "Build Browser Extension Is Very Easy!!",
-  favicon: "img/favicon.ico",
+  favicon: "img/logo.png",
 
   // Set the production url of your site here
   url: "https:///creatorsdao.github.io",
@@ -65,7 +65,7 @@ const config = {
         title: "Plasmo-Co-Learn",
         logo: {
           alt: "My Site Logo",
-          src: "img/logo.svg",
+          src: "img/logo.png",
         },
         items: [
           {
