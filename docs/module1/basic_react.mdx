@@ -54,7 +54,7 @@ pnpm create vite
 
 src 内部一般会有一个隐藏的主入口文件 这里是 main.tsx
 
-```Typescript
+```Typescript title=main.tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
@@ -72,7 +72,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 App 组件的代码在 App.tsx 中
 
-```Typescript
+```Typescript title=App.tsx
 function App() {
   const [count, setCount] = useState(0)
 
