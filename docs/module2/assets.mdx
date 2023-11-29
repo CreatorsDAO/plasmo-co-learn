@@ -2,7 +2,97 @@
 sidebar_position: 7
 ---
 
-## icon 资源
+# 静态资源
+
+## 静态资源使用
+
+`Plasmo` 可以加载静态资源， 比如 图片、字体、二进制的 WASM 、或者其他的文件。
+`Plasmo` 提供了几种机制加载这些资源。
+
+### 内联加载
+
+最简单的方式，是把资源文件的数据作为 Base64 的对象方式加载。
+
+示例中展示了，如何 base64 方式的加载图片
+
+```typescript
+import someCoolImage from "data-base64:~assets/some-cool-image.png"
+...
+<img src={someCoolImage} alt="Some pretty cool image" />
+```
+
+:::tip
+这里需要注意[下关于 ~ 的解释](https://docs.plasmo.com/framework/import#tilde-)。
+:::
+
+### 网络资源加载
+
+通过 修改 package.json 在 manifest 中定义允许的资源，主要集中在 web_accessible_resources 的配置内容
+
+```json
+  "manifest": {
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "~raw.js",
+          "assets/pic*.png",
+          "resources/test.json"
+        ],
+        "matches": [
+          "https://www.plasmo.com/*"
+        ]
+      }
+    ],
+  }
+```
+
+以上列出的文件，都会被复制到 扩展的文件目录中。
+url 可以使用 [chrome.getURL](https://developer.chrome.com/docs/extensions/reference/runtime/#method-getURL)获取。
+各种路径都是相对于 package.json 同级的目录。
+
+以上列出的三种路径:
+
+1. raw.js 会在默认的根目录
+2. assets/pic\*.png 会复制为 assets 目录
+3. resources/test.json 会复制为 resources 目录。
+
+官方示例: [with-web-accessible-resources](https://github.com/PlasmoHQ/examples/tree/main/with-web-accessible-resources)
+
+### 运行时加载资源
+
+同时， web_accessible_resources 中定义的 资源，都可以通过运行时加载。
+比如:
+
+```typescript
+wasmPackage.localWASMPath("/assets/wasm/");
+```
+
+### 加载来自 node_modules 中的资源
+
+有时需要加载 node_modules 中的资源，也需要在 web_accessible_resources 定义。
+
+```json
+  "manifest": {
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "@inboxsdk/core/pageWorld.js",
+          "@inboxsdk/core/background.js"
+        ],
+        "matches": [
+          "https://mail.google.com/*"
+        ]
+      }
+    ]
+  }
+```
+
+参考示例: [with-inbox-sdk](https://github.com/PlasmoHQ/examples/tree/main/with-inbox-sdk)
+
+:::tip
+
+[inboxsdk](https://www.inboxsdk.com/)是一个开发 `Gmail`扩展的综合工具包。
+:::
 
 ## 扩展图标 (icon)
 
@@ -25,5 +115,3 @@ sidebar_position: 7
 ### 自定义开发者图标
 
 如果你不喜欢灰色的图标，你也可以保存为 `assets/icon.development.png` 来作为开发模式图标。
-
-# 静态资源使用
