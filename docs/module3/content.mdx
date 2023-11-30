@@ -3,3 +3,57 @@ sidebar_position: 4
 ---
 
 # Content Script
+
+## 简述
+
+在浏览器扩展中，`Content Script`内容脚本）是一种特殊的脚本。
+它们在浏览器中运行，但与网页自身的 JavaScript 环境是隔离的。这个隔离环境通常被称为“隔离世界”(isolated world)。
+这种设计有以下几个重要意义：
+
+1. 防止冲突
+   由于内容脚本运行在隔离的环境中，它不会直接与网页中原有的 JavaScript 代码或其他扩展的内容脚本相冲突。
+   这意味着，即使多个扩展都在同一网页上运行内容脚本，它们也不会相互干扰。
+2. 安全性
+   隔离世界确保了网页原有的 JavaScript 不能直接访问扩展的内容脚本，反之亦然。
+   这样做提高了安全性，防止恶意网站访问或修改扩展的内部逻辑。
+3. 保护用户数据
+   内容脚本可以访问网页内容和一些浏览器 API，但它们不能直接访问扩展的背景页（background page）或其他敏感数据。
+   这样做有助于保护用户数据不被未授权的脚本访问。
+
+在 `Plasmo` 中 `.ts` 文件，会被认为是纯脚本文件(不包含 UI 组件)的代码文件。
+同时 `.tsx` 则会被认为是 UI 脚本文件，需要有 UI 组件导出。
+
+## 以下列举四种使用场景
+
+1. 从当前页面获取数据
+2. 从当前页面选择元素，并设置样式
+3. 将 UI 元素注入到当前页面 [content-scripts-ui](https://docs.plasmo.com/framework/content-scripts-ui)
+4. 将代码注入到 Main 上下文
+
+## Say Hi to Content Script
+
+在 `Plasmo`目录新建一个 `content.ts` 或者 `contents/index.ts` 。
+
+```typescript title=content.ts
+export {};
+console.log("I did print this to console");
+```
+
+:::tip
+因为,`plasmo` 默认使用 `typescript`。 他那任何的一个文件当成一个 `module`。
+如果你没有其他的 `import` 或者 `export`, 你需要在开头添加 `export {};`
+:::
+
+重新加载你的扩展，打开任何一个页面，然后打开调试模式。
+在 `console` 面板你将看到你自己的输出。
+
+![](./hi-content.jpg)
+
+官方参考实例 [with-content-script](https://github.com/PlasmoHQ/examples/tree/main/with-content-script)
+
+## 添加多个 `Content Script`
+
+`Plasmo` 帮我们做了一件很酷的事情。
+你可以在 `contents` 目录中新建多个 ts 文件，每个 ts 文件都会作为一个独立的 content-script 存在。
+
+官方示例 : [with-many-content-scripts](https://github.com/PlasmoHQ/examples/tree/main/with-many-content-scripts)
