@@ -57,3 +57,134 @@ console.log("I did print this to console");
 你可以在 `contents` 目录中新建多个 ts 文件，每个 ts 文件都会作为一个独立的 content-script 存在。
 
 官方示例 : [with-many-content-scripts](https://github.com/PlasmoHQ/examples/tree/main/with-many-content-scripts)
+
+## 内容配置
+
+有的时候，你想限制你的`Content-script` 的运行范围、运行位置等信息。
+`Plasmo` 给每一个 `Content-script` 一个独立的配置，你可以通过 export 导出。
+
+```typescript
+import type { PlasmoCSConfig } from "plasmo";
+
+export const config: PlasmoCSConfig = {
+  matches: ["<all_urls>"],
+  all_frames: true,
+};
+```
+
+涉及到的属性及写法，请参看 [chrome 官方给出的解释:](https://developer.chrome.com/docs/extensions/mv3/content_scripts/#static-declarative)。
+
+## 注入到主上下文
+
+如果你想要修改 window 的对象，添加属性，或者方法。 那么，你需要 把你的脚本注入到 `Main world`。
+
+```typescript title=content.ts
+import type { PlasmoCSConfig } from "plasmo";
+
+export const config: PlasmoCSConfig = {
+  matches: ["<all_urls>"],
+  world: "MAIN",
+};
+
+window.mainMessage = "this is mainMessage hello world";
+window.callProxy = {
+  hello: () => {
+    console.log("you call me from anywhere in the world");
+  },
+};
+```
+
+修改之前，你需要提前定义好 window 支持的 interface ， 字段内容，或者方法。
+
+```typescript title=index.d.ts
+interface Window {
+  hello: {
+    world: string;
+    coolNumber: number;
+  };
+
+  mainMessage: string;
+  callProxy: {
+    hello: () => void;
+  };
+}
+```
+
+## 客户端调用一下
+
+大多数浏览器扩展的 sdk 都是通过 content-script 注入一个全局变量。
+
+同时客户端通过 全局变量的相关方法完成扩展的相关调用的。
+
+```html
+<button onclick="clickHandle()">Click Me!!!</button>
+<script>
+  function clickHandle() {
+    console.log(window.mainMessage);
+    window.callProxy.hello();
+  }
+</script>
+```
+
+## 手工注入
+
+手工注入脚本，你需要 `chrome.scripting.executeScript` 相关 API。
+手工注入，运行在 background 的上下文中，权限也比直接在 content 中注入高一些。
+最明显的一点， content 中的脚本必须遵守 CORS 的安全规则。
+
+1. 首先，你需要开启 script 权限
+
+```json
+{
+  ...
+  "manifest" : {
+    "permissions": ["scripting"]
+  }
+}
+```
+
+2. 在 background.ts 中触发注入
+
+```typescript title=background.ts
+import windowChanger from "./injected-helper";
+
+chrome.scripting.executeScript(
+  {
+    target: {
+      tabId, // the tab you want to inject into
+    },
+    world: "MAIN", // MAIN to access the window object
+    func: windowChanger, // function to inject
+  },
+  () => {
+    console.log("Background script got callback after injection");
+  }
+);
+```
+
+注入辅助函数:
+
+```typescript title=injected-helper.ts
+export default function windowChanger() {
+  const anotherFunc = (): number => {
+    return 42;
+  };
+
+  // Here's an example where we can reference the window object
+  // and add a new property to it
+  window.hello = {
+    world: "from injected content script",
+
+    coolNumber: anotherFunc(),
+    // you can call other functions from the injected script
+    // but they must be declared inside the injected function
+    // or be present in the global scope
+  };
+
+  // Here's an example where we show you can reference the DOM
+  // This console.log will show within the tab you injected into
+  console.log(document.getElementsByTagName("html"));
+}
+```
+
+官方示例 : [with-main-world](https://github.com/PlasmoHQ/examples/tree/main/with-main-world)
