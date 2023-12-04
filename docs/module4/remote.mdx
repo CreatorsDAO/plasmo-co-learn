@@ -3,3 +3,30 @@ sidebar_position: 5
 ---
 
 # Remote Code
+
+Plasmo 会自动把你在框架中 所有 import 的脚本 打包在浏览器扩展中。
+如果是远程 import ，那么需要使用 https 协议。
+
+[也是 MV3 远程代码标准](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/#remotely-hosted-code)
+
+添加 google 分析的类库
+
+```typescript
+import "https://www.googletagmanager.com/gtag/js?id=XXXXXX";
+```
+
+或者你也可以使用 [env](https://docs.plasmo.com/framework/env)。
+
+本次创建 .env.local
+
+```env
+PLASMO_PUBLIC_GTAG_ID=XXXXXX
+```
+
+然后，在 代码中使用
+
+```typescript
+import "https://www.googletagmanager.com/gtag/js?id=$PLASMO_PUBLIC_GTAG_ID";
+```
+
+官方提供了一个：[使用谷歌分析的一个实例](https://github.com/PlasmoHQ/examples/tree/main/with-google-analytics)。
