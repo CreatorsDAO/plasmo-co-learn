@@ -169,7 +169,10 @@ const inject = async (tabId: number) => {
 // You can inject however you'd like to, doesn't have
 // to be with chrome.tabs.onActivated
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status == "complete") {
+  const { status } = changeInfo;
+  const { url } = tab;
+  console.table({ url, status });
+  if (url && !url.startsWith("chrome://") && status && status == "complete") {
     console.log("let me inject some script!!", changeInfo.status);
     inject(tabId);
   }
@@ -200,5 +203,9 @@ export default function windowChanger() {
   console.log(document.getElementsByTagName("html"));
 }
 ```
+
+:::tip
+需要 `scripts` 的执行权限。
+:::
 
 官方示例 : [with-main-world](https://github.com/PlasmoHQ/examples/tree/main/with-main-world)
