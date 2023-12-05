@@ -10,9 +10,10 @@ sidebar_position: 1
 
 当 浏览器扩展的 `storage API` 不可用时，将降级为 `localStorage`。
 
-重要的一点，允许 各个模块之间的状态同步，包括 扩展页面、background 存储、content script 、web pages。
-
 :::tip
+
+`storage` 允许 各个模块之间的状态同步，包括 扩展页面、background 存储、content script 、web pages。
+
 使用这个类库，最好开启 `storage` 权限。
 :::
 
@@ -37,6 +38,92 @@ pnpm install @plasmohq/storage
 3. [MICE](https://github.com/PlasmoHQ/mice) 这个实例将存储和 webrtc 的 pipe message 结合，通过扩展同步数据。
 
 ## base Storage API
+
+`storage` 提供了了简单易用的 API。他可以应用在 `Plasmo` 的各个模块的 runtime 上下文。
+你不需要使用 `SON.stringify/parse` 来回解析数据。因为，他接受原始的数据格式。
+
+```typescript
+import { Storage } from "@plasmohq/storage";
+
+const storage = new Storage();
+
+await storage.set("key", "value");
+const data = await storage.get("key"); // "value"
+
+await storage.set("capt", { color: "red" });
+const data2 = await storage.get("capt"); // { color: "red" }
+```
+
+### 自定义存储位置
+
+初始化 `Storage` 对象的时候，可以提供 `area` 参数，默认为 `sync`。
+
+```typescript
+const storage = new Storage({
+  area: "local",
+});
+```
+
+提供的选项列表: "sync" | "local" | "managed" | "session"
+
+### 数据自动 copy
+
+```typescript
+const storage = new Storage({
+  copiedKeyList: ["shield-modulation"],
+});
+```
+
+通过设置 `copiedKeyList` , 你可以在 `content script` 和 `extention pages` 中将数据复制到 `localStorage`。
+以上代码会将 `shield-modulation` ,复制到 `localStorage`。
+
+### 数据监控 (应用在 state 状态同步)
+
+```typescript title=background.ts
+import { Storage } from "@plasmohq/storage";
+
+const storage = new Storage();
+
+await storage.set("serial-number", 47);
+await storage.set("make", "plasmo-corp");
+
+storage.watch({
+  "serial-number": (c) => {
+    console.log(c.newValue);
+  },
+  make: (c) => {
+    console.log(c.newValue);
+  },
+});
+
+await storage.set("serial-number", 96);
+await storage.set("make", "PlasmoHQ");
+```
+
+因为这种机制的存在，你也可以作为你的扩展内部的一种通信方式 。
+我们在 [with-redux](https://github.com/PlasmoHQ/examples/tree/main/with-redux)演示了这个功能。
+
+## 安全存储
+
+`SecureStorage` API 通过数据加密解密扩展了 `storage`,用于敏感数据的存储。
+
+因为 他利用了 [Web Crypto SubtleCrypto API ](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) , 所以，他只能在 https 的上下文中执行。
+
+```typescript
+import { SecureStorage } from "@plasmohq/storage/secure";
+
+const storage = new SecureStorage();
+
+await storage.setPassword("roosevelt"); // The only diff
+
+await storage.set("key", "value");
+const data = await storage.get("key"); // "value"
+
+await storage.set("capt", { color: "red" });
+const data2 = await storage.get("capt"); // { color: "red" }
+```
+
+## React Hook 方式调用
 
 :::tip
 [https://docs.plasmo.com/framework/storage#storage](https://docs.plasmo.com/framework/storage#storage)
