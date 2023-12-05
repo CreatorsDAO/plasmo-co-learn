@@ -148,18 +148,32 @@ interface Window {
 ```typescript title=background.ts
 import windowChanger from "./injected-helper";
 
-chrome.scripting.executeScript(
-  {
-    target: {
-      tabId, // the tab you want to inject into
+export {};
+
+const inject = async (tabId: number) => {
+  chrome.scripting.executeScript(
+    {
+      target: {
+        tabId,
+      },
+      world: "MAIN", // MAIN in order to access the window object
+      func: windowChanger,
     },
-    world: "MAIN", // MAIN to access the window object
-    func: windowChanger, // function to inject
-  },
-  () => {
-    console.log("Background script got callback after injection");
+    () => {
+      console.log("Background script got callback after injection");
+    }
+  );
+};
+
+// Simple example showing how to inject.
+// You can inject however you'd like to, doesn't have
+// to be with chrome.tabs.onActivated
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status == "complete") {
+    console.log("let me inject some script!!", changeInfo.status);
+    inject(tabId);
   }
-);
+});
 ```
 
 注入辅助函数:
