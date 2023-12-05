@@ -2,4 +2,42 @@
 sidebar_position: 1
 ---
 
-# Storage
+# Storage API
+
+`Plasmo` 提供了一个 封装好的 `Storage` 包 : `@plasmohq/storage`。
+
+这是一个适用于浏览器扩展的抽象了持久化存储能力的应用包管理器。
+
+当 浏览器扩展的 `storage API` 不可用时，将降级为 `localStorage`。
+
+重要的一点，允许 各个模块之间的状态同步，包括 扩展页面、background 存储、content script 、web pages。
+
+:::tip
+使用这个类库，最好开启 `storage` 权限。
+:::
+
+## 安装相关模块
+
+```shell
+pnpm install @plasmohq/storage
+```
+
+这个包，主要导出以下的三个内容
+
+| Modules                    | Description                                   |
+| :------------------------- | :-------------------------------------------- |
+| `@plasmohq/storage`        | The base [Storage API](#storage)              |
+| `@plasmohq/storage/secure` | The [SecureStorage API](#secure-storage)      |
+| `@plasmohq/storage/hook`   | The [React Hook Storage API](#react-hook-api) |
+
+## 使用实例
+
+1. [with-storage](https://github.com/PlasmoHQ/examples/tree/main/with-storage) 是一个使用 `storage` 同步 options 和 popups 之间的数据。
+2. [with-redux](https://github.com/PlasmoHQ/examples/tree/main/with-redux) 使用 `storage` 作为 `Redux` 的存储库的实例。
+3. [MICE](https://github.com/PlasmoHQ/mice) 这个实例将存储和 webrtc 的 pipe message 结合，通过扩展同步数据。
+
+## base Storage API
+
+:::tip
+[https://docs.plasmo.com/framework/storage#storage](https://docs.plasmo.com/framework/storage#storage)
+:::
