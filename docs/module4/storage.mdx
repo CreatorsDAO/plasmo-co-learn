@@ -195,6 +195,65 @@ return <p>{hailingFrequency}</p>; // "147"
 
 最后，当你在 `popup` 中输入值的时候，该值将通过 `storage` 同步到各个模块。
 
+### 渲染 初始值 (并持久化)
+
+初始化 `storage` 的时候，传递一个函数。该函数提供一个参数，表示当前 storage 中的值。
+如果已经被其他的组件初始化或者变更，该值将为最新的值，否则，将为 undefined。
+
+用如下的实例演示:
+
+设置如下的 popup
+
+```typescript title=popup.tsx
+const [hailingFrequency, setHailingFrequency] = useStorage("hailing", (v) => v === undefined ? "200": v)
+...
+{hailingFrequency} // "200"
+```
+
+然后，设置如下的 options
+
+```typescript title=options.tsx
+const [hailingFrequency, setHailingFrequency] = useStorage("hailing", (v) => v === undefined ? "100": v)
+...
+{hailingFrequency} // "100"
+```
+
+以上，会根据 options 或者 popup 打开的先后顺序不同，而确定为不同的值。
+
+1. 先打开 popup ,值会初始化为 100
+2. 先打开 options , 值会初始化为 200
+
+### 高级用法
+
+可以使用 useStorage 的不同返回值，确定不同的变更范围。
+
+- setStoreValue 将会同步数据到其他的组件
+- setRenderValue 只影响当前的状态
+- remove 则是删除 storage 数据
+
+具体实例如下
+
+```typescript
+const [
+  hailingFrequency,
+  setHailingFrequency,
+  { setRenderValue, setStoreValue, remove },
+] = useStorage("hailing");
+
+return (
+  <>
+    <input
+      value={hailingFrequency}
+      onChange={(e) => setRenderValue(e.target.value)}
+    />
+    <button onClick={() => setStoreValue()}>Save</button>
+    <button onClick={() => remove()}>Remove</button>
+  </>
+);
+```
+
+### 火狐浏览器的用法
+
 :::tip
 [https://docs.plasmo.com/framework/storage#storage](https://docs.plasmo.com/framework/storage#storage)
 :::
