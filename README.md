@@ -51,5 +51,4 @@
 2. 使用 plasmo的参考示例<https://github.com/PlasmoHQ/plasmo/network/dependents> 
 3. google Chrome 模块开发文档 <https://developer.chrome.com/docs/extensions/mv3/>
 4. 火狐浏览器扩展开发文档 <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions>
-
-
+5. 像素风格 UI 类库 <https://github.com/nostalgic-css/NES.css>

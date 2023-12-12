@@ -76,9 +76,18 @@ const config = {
           },
           { to: "/blog", label: "Blog", position: "left" },
           {
-            href: "https://docs.plasmo.com/",
-            label: "Plasmo",
+            label: "Links",
             position: "right",
+            items: [
+              {
+                href: "https://github.com/PlasmoHQ/examples",
+                label: "Examples",
+              },
+              {
+                href: "https://docs.plasmo.com/",
+                label: "Plasmo Documents",
+              },
+            ],
           },
           {
             href: "https://github.com/CreatorsDAO/plasmo-co-learn",
@@ -135,6 +144,10 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+      },
+      colorMode: {
+        defaultMode: "dark",
+        disableSwitch: false,
       },
     }),
 };

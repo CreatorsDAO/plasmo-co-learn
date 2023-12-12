@@ -64,7 +64,7 @@ const storage = new Storage({
 });
 ```
 
-提供的选项列表: "sync" | "local" | "managed" | "session"
+提供的选项列表 "sync" | "local" | "managed" | "session"
 
 ### 数据自动 copy
 
@@ -123,7 +123,77 @@ await storage.set("capt", { color: "red" });
 const data2 = await storage.get("capt"); // { color: "red" }
 ```
 
-## React Hook 方式调用
+## React Hook
+
+hook API 是为了在扩展各个模块之间状态同步设计的。
+他有好多种不同的用途，但是，最首要也是重要的是在 `React` 组件中使用。
+
+```typescript
+import { useStorage } from "@plasmohq/storage/hook";
+```
+
+### 渲染 state 的最新 value
+
+```typescript
+const [hailingFrequency] = useStorage("hailing")
+...
+{hailingFrequency}
+```
+
+### 使用自定义存储实例
+
+```typescript
+import { Storage } from "@plasmohq/storage"
+import { useStorage } from "@plasmohq/storage/hook"
+...
+const [hailingFrequency] = useStorage({
+  key: "hailing",
+  instance: new Storage({
+    area: "local"
+  })
+})
+```
+
+### 渲染 初始值 (无关持久化)
+
+由于 `useStorage` 的初始化，可能存在于各个组件中，存在着先后顺序。
+那么，初始化的时候，可能发生冲突。 `Plasmo` 定义了初始化机制。
+提供固定的原始值，各个组件中的 `storage` 在未初始化的时候，互相隔离，即互不影响。
+但是，一旦其中的任何一个 `storage` 数据变更，将会同步到其他的组件当中。
+
+以下的实例描述了这个现象:
+
+在 `popup` 中定义初始值
+
+```typescript title=popup.tsx
+const [hailingFrequency, setHailingFrequency] = useStorage("hailing", "42")
+...
+<input value={hailingFrequency} onChange={(e) =>
+  setHailingFrequency(e.target.value)
+  }/> // "42"
+```
+
+以上的实例，最开始的值显示为 42。
+
+在 `content.tsx` 中订阅数据更新
+
+```typescript title=content.tsx
+const [hailingFrequency] = useStorage("hailing");
+return <p>{hailingFrequency}</p>; // undefined
+```
+
+未定义初始值，将显示 undefined。
+
+在 `options.tsx`中订阅数据，并提供不一样的初始值。
+
+```typescript title=options.tsx
+const [hailingFrequency] = useStorage("hailing", "147");
+return <p>{hailingFrequency}</p>; // "147"
+```
+
+定义了不一样的初始值，显示为 147。
+
+最后，当你在 `popup` 中输入值的时候，该值将通过 `storage` 同步到各个模块。
 
 :::tip
 [https://docs.plasmo.com/framework/storage#storage](https://docs.plasmo.com/framework/storage#storage)
