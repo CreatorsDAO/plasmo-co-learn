@@ -254,6 +254,23 @@ return (
 
 ### 火狐浏览器的用法
 
-:::tip
-[https://docs.plasmo.com/framework/storage#storage](https://docs.plasmo.com/framework/storage#storage)
+火狐浏览器使用 `storage` 的时候，你可能遇到如下的错误。
+
+:::warning
+Error: The storage API will not work with a temporary addon ID.
+Please add an explicit addon ID to your manifest. For more information see https://mzl.la/3lPk1aE
 :::
+
+解决办法，是火狐浏览器使用 `storage` 的时候，需要提供一个扩展 ID。
+
+```json
+"manifest": {
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "your-id@example.com"
+    }
+  }
+}
+```
+
+开发过程中, `ID` 可以随意定义。 发布的时候，你可以使用你的扩展 ID 来代替。
