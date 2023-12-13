@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkplasmo_co_learn=self.webpackChunkplasmo_co_learn||[]).push([[642],{9305:o=>{o.exports=JSON.parse('{"permalink":"/plasmo-co-learn/blog/tags/docusaurus","page":1,"postsPerPage":10,"totalPages":1,"totalCount":2,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
