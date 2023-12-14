@@ -21,7 +21,7 @@ sidebar_position: 6
 1. 路径为 `plasmo` 目录下的 `sandbox.ts` 或者 `sandbox/<name>.ts`。
 2. 导出如下的代码:
 
-```typescript title=sandbox.ts
+```ts title="sandbox.ts"
 export const life = 42;
 
 window.addEventListener("message", async function (event) {
@@ -40,7 +40,7 @@ window.addEventListener("message", async function (event) {
 
 这里使用一个 `popup` 作为调用
 
-```typescript title=popup.tsx
+```ts title="popup.tsx"
 import { useEffect, useRef, useState } from "react";
 
 function IndexPopup() {

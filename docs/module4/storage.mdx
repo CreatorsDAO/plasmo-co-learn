@@ -79,7 +79,7 @@ const storage = new Storage({
 
 ### 数据监控 (应用在 state 状态同步)
 
-```typescript title=background.ts
+```ts title="background.ts"
 import { Storage } from "@plasmohq/storage";
 
 const storage = new Storage();
@@ -165,7 +165,7 @@ const [hailingFrequency] = useStorage({
 
 在 `popup` 中定义初始值
 
-```typescript title=popup.tsx
+```ts title="popup.tsx"
 const [hailingFrequency, setHailingFrequency] = useStorage("hailing", "42")
 ...
 <input value={hailingFrequency} onChange={(e) =>
@@ -177,7 +177,7 @@ const [hailingFrequency, setHailingFrequency] = useStorage("hailing", "42")
 
 在 `content.tsx` 中订阅数据更新
 
-```typescript title=content.tsx
+```ts title="content.tsx"
 const [hailingFrequency] = useStorage("hailing");
 return <p>{hailingFrequency}</p>; // undefined
 ```
@@ -186,7 +186,7 @@ return <p>{hailingFrequency}</p>; // undefined
 
 在 `options.tsx`中订阅数据，并提供不一样的初始值。
 
-```typescript title=options.tsx
+```ts title="options.tsx"
 const [hailingFrequency] = useStorage("hailing", "147");
 return <p>{hailingFrequency}</p>; // "147"
 ```
@@ -204,7 +204,7 @@ return <p>{hailingFrequency}</p>; // "147"
 
 设置如下的 popup
 
-```typescript title=popup.tsx
+```ts title="popup.tsx"
 const [hailingFrequency, setHailingFrequency] = useStorage("hailing", (v) => v === undefined ? "200": v)
 ...
 {hailingFrequency} // "200"
@@ -212,7 +212,7 @@ const [hailingFrequency, setHailingFrequency] = useStorage("hailing", (v) => v =
 
 然后，设置如下的 options
 
-```typescript title=options.tsx
+```ts title="options.tsx"
 const [hailingFrequency, setHailingFrequency] = useStorage("hailing", (v) => v === undefined ? "100": v)
 ...
 {hailingFrequency} // "100"

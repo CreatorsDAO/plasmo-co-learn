@@ -33,6 +33,27 @@ pnpm install @plasmohq/messaging
 
 ## Message Flow
 
+使用 `Message Flow` 可以完成扩展组件间的一次性通信。
+通信双方可以是 `tab page`、`content script` 、 `background service worker`。
+这种通信规则，可以把大量的数据计算或者因为 CORS 规则无法调用的函数放到`background`中去完成。
+
+`background service` 的工作函数是一个信息中心，每个服务都包含一个 Rest API 样式的处理器。
+你可以很方便的在 `background/messages` 创建一个 ts 模块，文件名将会是 message 的名字，默认导出的函数必须是函数处理器。
+
+```ts title="background/messages/ping.ts"
+import type { PlasmoMessaging } from "@plasmohq/messaging";
+
+const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
+  const message = await querySomeApi(req.body.id);
+
+  res.send({
+    message,
+  });
+};
+
+export default handler;
+```
+
 :::info
 https://docs.plasmo.com/framework/messaging
 :::

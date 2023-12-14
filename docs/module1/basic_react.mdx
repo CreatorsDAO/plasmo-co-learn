@@ -54,17 +54,17 @@ pnpm create vite
 
 src 内部一般会有一个隐藏的主入口文件 这里是 main.tsx
 
-```Typescript title=main.tsx
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+```ts title="main.tsx"
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
 ```
 
 大多数 React 项目依赖于核心类库`ReactDOM`,他也是`React`框架的一部分。 App.tsx 中定义自己的应用组件。
@@ -72,9 +72,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 App 组件的代码在 App.tsx 中
 
-```Typescript title=App.tsx
+```ts title="App.tsx"
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -99,10 +99,10 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
 ```
 
 这个文件 通过 export 对外到处一个 函数组件，这个函数组件返回了一个 React Dom 结构。

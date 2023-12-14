@@ -14,7 +14,7 @@ sidebar_position: 3
 
 `plasmo` 提供了一个及简单的方式添加 `Background`。 在 `plasmo`目录创建`background.ts`即可。
 
-```typescript title=background.ts
+```ts title="background.ts"
 export {};
 
 console.log(
@@ -58,7 +58,7 @@ console.log(
 
 在 `background.ts` 中添加定义:
 
-```typescript title=background.ts
+```ts title="background.ts"
 chrome.runtime.onInstalled.addListener(() => {
   // 创建上下文菜单项
   chrome.contextMenus.create({
@@ -89,7 +89,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 然后在 `package.json` 中添加权限声明:
 
-```typescript title=package.json
+```json title="package.json"
 ....
 "permissions": [
       "tabs","commands"

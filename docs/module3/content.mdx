@@ -34,7 +34,7 @@ sidebar_position: 4
 
 在 `Plasmo`目录新建一个 `content.ts` 或者 `contents/index.ts` 。
 
-```typescript title=content.ts
+```ts title="content.ts"
 export {};
 console.log("I did print this to console");
 ```
@@ -78,7 +78,7 @@ export const config: PlasmoCSConfig = {
 
 如果你想要修改 window 的对象，添加属性，或者方法。 那么，你需要 把你的脚本注入到 `Main world`。
 
-```typescript title=content.ts
+```ts title="content.ts"
 import type { PlasmoCSConfig } from "plasmo";
 
 export const config: PlasmoCSConfig = {
@@ -96,7 +96,7 @@ window.callProxy = {
 
 修改之前，你需要提前定义好 window 支持的 interface ， 字段内容，或者方法。
 
-```typescript title=index.d.ts
+```ts title="index.d.ts"
 interface Window {
   hello: {
     world: string;
@@ -145,7 +145,7 @@ interface Window {
 
 2. 在 background.ts 中触发注入
 
-```typescript title=background.ts
+```ts title="background.ts"
 import windowChanger from "./injected-helper";
 
 export {};
@@ -181,7 +181,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 注入辅助函数:
 
-```typescript title=injected-helper.ts
+```ts title="injected-helper.ts"
 export default function windowChanger() {
   const anotherFunc = (): number => {
     return 42;
