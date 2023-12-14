@@ -46,8 +46,7 @@ const config = {
           showLastUpdateTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this " links.
-          editUrl:
-            "https://github.com/CreatorsDAO/ppagelasmo-co-learn/tree/main",
+          editUrl: "https://github.com/CreatorsDAO/plasmo-co-learn/tree/main",
           breadcrumbs: true,
         },
         blog: {
