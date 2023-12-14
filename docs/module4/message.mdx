@@ -106,6 +106,72 @@ console.log(resp)
 
 :::
 
+## Relay Flow
+
+:::warning
+这个模块目前还处于 Alpha 阶段，可能有 Bug ，同时 后期的 API 也可能会变化。请谨慎使用。
+
+可以随时通过 [https://docs.plasmo.com/bug](https://docs.plasmo.com/bug) 反馈你遇到的 Bug 或者其他问题。
+:::
+
+同 Message Flow 的区别:
+
+1. 调用方不同。 Message Flow 的调用来源，只能是 扩展页面或者 `Content Script`。 而 Relay Flow 的来源是网站页面。
+2. 运行位置不同。 Message Flow 处理器运行在 `background`，而 `Relay Flow` 跑在 `Content Script` 或者 `Sandbox`。
+
+Content Script 中的处理实例
+
+```ts title="contents/plasmo.ts"
+import type { PlasmoCSConfig } from "plasmo";
+
+import { relayMessage } from "@plasmohq/messaging";
+
+export const config: PlasmoCSConfig = {
+  matches: ["http://www.plasmo.com/*"], // Only relay messages from this domain
+};
+
+relayMessage({
+  name: "ping",
+  async(req)=>{
+    return {
+      message: "hello from content"
+    }
+  }
+});
+```
+
+Sandbox 中的调用监听实例
+
+```ts title="sandbox.ts"
+import { relayMessage } from "@plasmohq/messaging/relay";
+
+relayMessage(
+  {
+    name: "ping",
+  },
+  async (req) => {
+    console.log("some message was relayed:", req);
+
+    return {
+      message: "Hello from sandbox",
+    };
+  }
+);
+```
+
+网站调用方式，同样需要使用 `@plasmohq/messaging` 提供的 API 接口。
+
+```ts title="pages/index.tsx"
+import { sendToBackgroundViaRelay } from "@plasmohq/messaging"
+...
+
+const resp = await sendToBackgroundViaRelay({
+  name: "ping"
+})
+
+console.log(resp)
+```
+
 :::info
 https://docs.plasmo.com/framework/messaging
 :::
