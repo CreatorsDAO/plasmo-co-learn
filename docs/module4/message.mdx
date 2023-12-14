@@ -172,6 +172,158 @@ const resp = await sendToBackgroundViaRelay({
 console.log(resp)
 ```
 
-:::info
-https://docs.plasmo.com/framework/messaging
+## Ports
+
+:::warning
+这个模块目前还处于 Alpha 阶段，可能有 Bug ，同时 后期的 API 也可能会变化。请谨慎使用。
+
+可以随时通过 [https://docs.plasmo.com/bug](https://docs.plasmo.com/bug) 反馈你遇到的 Bug 或者其他问题。
 :::
+
+`Message Ports` API 是 `Plasmo` 使用
+[chrome 的 Port API ](https://developer.chrome.com/docs/extensions/develop/concepts/messaging?hl=zh-cn#connect)
+封装完成的一种长连接。
+
+交互双方是从 `Content Script` 和 `扩展页面` 调用 `background` 调用。
+
+当前实现主要是从 `background service worker` 中创建监听。
+
+创建一个 BGSW Port 处理器，只需要在 `background` 目录中，创建 `ports` 目录。
+然后，创建处理器文件，文件名也是 port 的名字，默认导出的函数必须是函数处理器。
+
+```ts title="background/ports/mail.ts"
+import type { PlasmoMessaging } from "@plasmohq/messaging";
+
+const handler: PlasmoMessaging.PortHandler = async (req, res) => {
+  console.log(req);
+
+  res.send({
+    message: "Hello from port handler",
+  });
+};
+
+export default handler;
+```
+
+调用 port 处理器有两种方法。
+
+### 使用 getPort 函数
+
+在 扩展页面中，你可以通过 `@plasmohq/messaging/port` 的 getPort 函数获得 port 对象。
+然后，通过向 port 调用 postMessage 和 onMessage 监控消息返回。
+
+```ts title="popup.svelte"
+<script lang="ts">
+  import { getPort } from "@plasmohq/messaging/port"
+  import { onMount, onDestroy } from "svelte"
+
+  let output = ""
+
+  const mailPort = getPort("mail")
+
+  onMount(() => {
+    mailPort.onMessage.addListener((msg) => {
+      output = msg
+    })
+  })
+
+  onDestroy(() => {
+    mailPort.onMessage.removeListener((msg) => {
+      output = msg
+    })
+  })
+
+  function handleSubmit() {
+    mailPort.postMessage({
+      body: {
+        hello: "world"
+      }
+    })
+  }
+</script>
+
+<div>{output}</div>
+```
+
+### 使用 `usePort` 的 `React API`
+
+```ts title="tabs/delta.tsx"
+import { usePort } from "@plasmohq/messaging/hook";
+
+function DeltaTab() {
+  const mailPort = usePort("mail");
+
+  return (
+    <div>
+      {mailPort.data?.message}
+      <button
+        onClick={async () => {
+          mailPort.send({
+            hello: "world",
+          });
+        }}
+      >
+        Send Data
+      </button>
+    </div>
+  );
+}
+
+export default DeltaTab;
+```
+
+## Initial Type Error
+
+如果你遇到了 类似的 错误 ： `"name" is never`。
+这是因为 `Plasmo` 需要编译处理器函数。
+你可以按照如下的方式解决:
+
+1. 重启 Dev Server
+2. 重启 你的 IDE 的 typescript Server
+
+## E2E Type Safety (WIP) 点对点类型安全
+
+点对点 （E2E）的通信仍然在开发阶段 [#334](https://github.com/PlasmoHQ/plasmo/issues/334)。
+同时你可以使用如下的泛型来封装数据。
+
+```ts title="background/messages/ping.ts"
+import type { PlasmoMessaging } from "@plasmohq/messaging";
+
+export type RequestBody = {
+  id: number;
+};
+
+export type ResponseBody = {
+  message: string;
+};
+
+const handler: PlasmoMessaging.MessageHandler<
+  RequestBody,
+  ResponseBody
+> = async (req, res) => {
+  console.log(req.body.id);
+
+  res.send({
+    message: "Hello from background",
+  });
+};
+
+export default handler;
+```
+
+```ts title="popup.tsx"
+import { sendToBackground } from "@plasmohq/messaging"
+
+import type { RequestBody, ResponseBody } from "~background/messages/ping"
+
+...
+
+const resp = await sendToBackground<RequestBody, ResponseBody>({
+  name: "ping",
+  body: {
+    id: 123
+  }
+})
+
+console.log(resp)
+```
