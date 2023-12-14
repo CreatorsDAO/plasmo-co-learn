@@ -33,8 +33,9 @@ pnpm install @plasmohq/messaging
 
 ## Message Flow
 
-使用 `Message Flow` 可以完成扩展组件间的一次性通信。
-通信双方可以是 `tab page`、`content script` 、 `background service worker`。
+使用 `Message Flow` 可以完成扩展组件间的一次性通信。 这是一种和普通的 API 接口非常相似的一种交互方式。
+
+通信双方可以是 `tab page`、`content script`相当于我们的前端页面， `background service worker` 相当于我们的后端 API 接口。
 这种通信规则，可以把大量的数据计算或者因为 CORS 规则无法调用的函数放到`background`中去完成。
 
 `background service` 的工作函数是一个信息中心，每个服务都包含一个 Rest API 样式的处理器。
@@ -53,6 +54,57 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
 export default handler;
 ```
+
+以上是类似的后端 API 接口，接下来我们介绍 如何调用。
+在 扩展页面、Content Script 或者 tab page 中我们通过 `@plasmohq/messaging` 的 API 发起交互。
+
+由于 `Plasmo` 在后台可以解析我们的 Service 调用，你使用的 IDE 触发消息名称的提示感知。
+
+```ts title="popup.tsx"
+import { sendToBackground } from "@plasmohq/messaging"
+
+...
+const resp = await sendToBackground({
+  name: "ping",
+  body: {
+    id: 123
+  }
+})
+
+console.log(resp)
+```
+
+如果你需要从前端的 `content script` 向后端发起交互，那么你需要你的 扩展 ID。
+你看的扩展 ID 可以通过， `chrome://extensions` 扩展管理页面获得。
+
+```ts title="contents/componentInTheMainWorld.tsx"
+import { sendToBackground } from "@plasmohq/messaging"
+import type { PlasmoCSConfig } from "plasmo"
+
+export const config: PlasmoCSConfig = {
+  matches: ["<all_urls>"],
+  world: "MAIN"
+}
+...
+const resp = await sendToBackground({
+  name: "ping",
+  body: {
+    id: 123
+  },
+  extensionId: 'llljfehhnoeipgngggpomjapaakbkyyy' // find this in chrome's extension manager
+})
+
+console.log(resp)
+```
+
+:::tip
+这样，自然也带来了一个问题。扩展 ID 怎么获得呢？
+
+1. 开发阶段你可以通过，扩展管理器中获得，开发过程中保持不变。
+2. 发布后怎么获得呢？
+   一种解决思路是，通过 `background` 中调用 `chrome.runtime.id` 获得。然后通过其他途径传递到前端`Content-Script`
+
+:::
 
 :::info
 https://docs.plasmo.com/framework/messaging
