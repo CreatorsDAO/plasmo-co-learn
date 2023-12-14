@@ -4,6 +4,35 @@ sidebar_position: 5
 
 # Message API
 
+`Plasmo` 提供了封装好的 Message API , 这让扩展各个模块之间通信变得简单。
+在你的 `Plasmo`项目目录中的 `background` 目录，添加 `Message` 文件目录， `Plasmo` 将为你完成剩余的工作。
+`Plasmo` 提供声明式的、类型安全的 函数结构，同时提供 `Promise`结构的异步函数执行结构。
+
+## 安装模块
+
+```shell
+pnpm install @plasmohq/messaging
+```
+
+安装完成后，在你的 `Plasmo` 的 `background` 目录 创建 messages 模块。
+如果你使用了 `background.ts`, 那么你需要创建 `background` 目录， 其中创建 `index.ts`。
+
+## 模块及通信规则
+
+| Messaging API                 | From         | To           | One-time | Long-lived |
+| :---------------------------- | :----------- | :----------- | :------- | :--------- |
+| [Message Flow](#message-flow) | Ext-Pages/CS | BGSW         | Yes      | No         |
+| [Relay Flow](#relay-flow)     | Website      | CS/BGSW      | Yes      | No         |
+| [Ports](#ports)               | Ext-Pages/CS | BGSW         | No       | Yes        |
+| Ports                         | BGSW         | Ext-Pages/CS | No       | Yes        |
+| Ports + Relay                 | BGSW         | WebPage      | Yes      | Yes        |
+
+## 官方示例
+
+- 官方示例 : [with-messaging](https://github.com/PlasmoHQ/examples/tree/main/with-messaging)
+
+## Message Flow
+
 :::info
 https://docs.plasmo.com/framework/messaging
 :::
