@@ -14,7 +14,7 @@ const storage = new Storage()
 chrome.runtime.onInstalled.addListener(async () => {
   const keypair = Keypair.generate()
   await storage.set("secret", keypair.secretKey.toString())
-  await storage.set("address", keypair.publicKey.toString())
+  await storage.set("addressStr", keypair.publicKey.toBase58())
   console.log("Extension installed.")
 })
 

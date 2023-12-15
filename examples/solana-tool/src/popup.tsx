@@ -7,6 +7,8 @@ import { useEffect, useState } from "react"
 
 import { useStorage } from "@plasmohq/storage/hook"
 
+import { rpcUrl } from "./config"
+
 import "~style.css"
 
 function IndexPopup() {
@@ -15,9 +17,10 @@ function IndexPopup() {
   // const packageId =
   //   "0x9e38050fd03f181c17f6f1d682ab55c7c16666eed4e17470489e24c64b11b4cd"
 
-  let connection = new web3.Connection(web3.clusterApiUrl("testnet"))
+  // let connection = new web3.Connection(web3.clusterApiUrl("testnet"))
+  let connection = new web3.Connection(rpcUrl)
 
-  const [address] = useStorage("address")
+  const [addressStr] = useStorage("addressStr")
   const [balance, setBalance] = useState(0)
   const [counter, setCounter] = useState("")
   const [counterVersion, updateCounterVersion] = useState(0)
@@ -38,15 +41,17 @@ function IndexPopup() {
   }
 
   useEffect(() => {
-    if (address) {
+    if (addressStr) {
       const initWallet = async () => {
-        console.log("init wallet ", address)
-        const balance = await connection.getBalance(address)
+        console.log("init wallet ", addressStr)
+        const balance = await connection.getBalance(
+          new web3.PublicKey(addressStr)
+        )
         setBalance(balance)
       }
       initWallet()
     }
-  }, [address])
+  }, [addressStr])
 
   useEffect(() => {
     const updateCounter = async () => {
@@ -73,7 +78,7 @@ function IndexPopup() {
         height: "500px"
       }}
       className="plasmo-p-5 plasmo-flex-auto">
-      <div>Address : {address}</div>
+      <div>Address : {addressStr}</div>
       <div>Balance : {balance}</div>
       <div>Counter: {counter}</div>
       <div>
