@@ -24,13 +24,15 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     const privateKey = await storage.get("secret")
     const privateKeyBytes = fromB64(privateKey)
     // console.log(privateKeyBytes)
-    sendResponse({ privateKeyBytes })
+    // sendResponse({ privateKeyBytes })
     const signer = Ed25519Keypair.fromSecretKey(privateKeyBytes)
-    console.log(signer.toSuiAddress().toString())
+    console.log("caller address -> ", signer.toSuiAddress().toString())
     const tx = await client.signAndExecuteTransactionBlock({
       signer: signer,
       transactionBlock: txb
     })
+
+    console.log("transaction : ", tx)
 
     sendResponse(tx)
   }
