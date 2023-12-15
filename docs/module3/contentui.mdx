@@ -4,6 +4,48 @@ sidebar_position: 4
 
 # Content Script UI
 
+## 基础描述
+
+同 `Content Script` 处于同等重要的地位，你可以选择，在各个页面中，注入包含 UI 的部分。
+`Plasmo` 对这部分做了封装，你可以很轻易完成需求。
+
+在`Plasmo`中 首先支持在 Web 网页中嵌入 React 、Svelte3、Vue3 组件。 这类功能叫做 `Content Script UI`。
+
+一个浏览器扩展可以包含多个 `Content Script UI` 组件， 通过 导出 [Config](https://docs.plasmo.com/framework/content-scripts#config) 对象，可以控制组件的行为。
+
+### 注入一个 `React`组件
+
+1. 创建一个 `content.tsx`
+2. 导出一个默认的 `React` 组件。
+3. 完成 🎉
+
+```ts title="content.tsx"
+const CustomButton = () => {
+  return <button>Custom button</button>;
+};
+
+export default CustomButton;
+```
+
+:::note
+当需要多个组件时，你需要创建 `contents` 目录,在该目录下创建组件文件。
+:::
+
+完整实例 : [with-content-scripts-ui](https://github.com/PlasmoHQ/examples/tree/main/with-content-scripts-ui)
+
+### 配置项
+
+因为, CSUI 也是 Content Script 的子集，所以，共享一个[内容配置](content#内容配置)。
+
+### 他是怎么工作的呢？
+
+`Plasmo` 创建了一个 [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM)。
+在其中挂载了你导出的 UI 组件。这种机制有效保证了你的组件样式的独立性，即不受页面样式影响。
+
+## Life Cycle
+
+## Style
+
 :::tip
 
 https://docs.plasmo.com/framework/content-scripts-ui
