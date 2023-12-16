@@ -1,9 +1,7 @@
-// import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client"
-// import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519"
-// import { TransactionBlock } from "@mysten/sui.js/transactions"
-// import { fromB64 } from "@mysten/sui.js/utils"
+import { Keypair, VersionedTransaction } from "@solana/web3.js"
+import nacl from "tweetnacl"
 
-import { Keypair } from "@solana/web3.js"
+// https://docs.solana.com/developing/clients/javascript-reference
 
 import { Storage } from "@plasmohq/storage"
 
@@ -13,7 +11,9 @@ const storage = new Storage()
 
 chrome.runtime.onInstalled.addListener(async () => {
   const keypair = Keypair.generate()
-  await storage.set("secret", keypair.secretKey.toString())
+  let buf = Buffer.from(keypair.secretKey)
+  await storage.set("secret", buf.toString("hex"))
+
   await storage.set("addressStr", keypair.publicKey.toBase58())
   console.log("Extension installed.")
 })
@@ -21,11 +21,27 @@ chrome.runtime.onInstalled.addListener(async () => {
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === "executeTransaction") {
     // const client = new SuiClient({ url: getFullnodeUrl("testnet") })
-    // const transactionBytes = message.transactionBytes
+    const transactionBuffer = message.transactionBytes as Buffer
+    console.log("transactionBytes -> ", transactionBuffer)
     // const txb = TransactionBlock.from(transactionBytes)
-    // const privateKey = await storage.get("secret")
-    // const privateKeyBytes = fromB64(privateKey)
-    // // console.log(privateKeyBytes)
+    const privateKeyStr = await storage.get("secret")
+    const privateKeyBytes = Buffer.from(privateKeyStr, "hex")
+
+    const signer = Keypair.fromSecretKey(privateKeyBytes)
+    const signature = nacl.sign.detached(
+      Buffer.from(transactionBuffer),
+      signer.secretKey
+    )
+    console.log("signature->", signature)
+
+    const transaction = VersionedTransaction.deserialize(
+      Buffer.from(transactionBuffer)
+    )
+    console.log(transaction)
+    // transaction.addSignature(signer.publicKey, Buffer.from("jellyfish"))
+
+    // console.log("transaction->", transaction)
+
     // // sendResponse({ privateKeyBytes })
     // const signer = Ed25519Keypair.fromSecretKey(privateKeyBytes)
     // console.log("caller address -> ", signer.toSuiAddress().toString())

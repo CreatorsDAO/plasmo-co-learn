@@ -2,7 +2,14 @@
 // import { getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui.js/faucet"
 // import { TransactionBlock } from "@mysten/sui.js/transactions"
 // import { MIST_PER_SUI } from "@mysten/sui.js/utils"
-import * as web3 from "@solana/web3.js"
+
+import {
+  Connection,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction
+} from "@solana/web3.js"
 import { useEffect, useState } from "react"
 
 import { useStorage } from "@plasmohq/storage/hook"
@@ -17,37 +24,64 @@ function IndexPopup() {
   // const counterID =
   //   "0xca9b2043af3accad328bbae361a4941a778ebc6d2f02ffe09b001c06ed643934"
 
-  // let connection = new web3.Connection(web3.clusterApiUrl("testnet"))
-  let connection = new web3.Connection(rpcUrl, "finalized")
+  // let connection = new Connection(clusterApiUrl("testnet"))
+  let connection = new Connection(rpcUrl, "finalized")
 
   const [addressStr] = useStorage("addressStr")
   const [balance, setBalance] = useState(0)
   const [counter, setCounter] = useState(0)
   const [counterVersion, updateCounterVersion] = useState(0)
 
-  const [counterAccount, bump_seed] = web3.PublicKey.findProgramAddressSync(
+  const [counterAccount, bump_seed] = PublicKey.findProgramAddressSync(
     [Buffer.from(counterName)],
-    new web3.PublicKey(programID)
+    new PublicKey(programID)
   )
 
   const addCounter = async () => {
-    // const txb = new TransactionBlock()
-    // txb.moveCall({
-    //   target: `${packageId}::counter::add_value`,
-    //   arguments: [txb.object(counterID), txb.pure(1)]
-    // })
-    // console.log(txb.serialize())
-    // const tx = await chrome.runtime.sendMessage({
-    //   action: "executeTransaction",
-    //   transactionBytes: txb.serialize()
-    // })
+    let blockhash = (await connection.getLatestBlockhash("finalized")).blockhash
+    console.log("blockhash : -> ", blockhash)
+
+    let transaction = new Transaction()
+    transaction.recentBlockhash = blockhash
+    transaction.feePayer = new PublicKey(addressStr)
+
+    transaction.add(
+      new TransactionInstruction({
+        keys: [
+          {
+            pubkey: new PublicKey(addressStr),
+            isSigner: true,
+            isWritable: true
+          },
+          {
+            pubkey: counterAccount,
+            isSigner: false,
+            isWritable: true
+          },
+          {
+            pubkey: SystemProgram.programId,
+            isSigner: false,
+            isWritable: false
+          }
+        ],
+        programId: new PublicKey(programID),
+        data: Buffer.from([1])
+      })
+    )
+
+    console.log("transaction : -> ", transaction)
+    console.log("serialized transaction : -> ", transaction.serializeMessage())
+    const tx = await chrome.runtime.sendMessage({
+      action: "executeTransaction",
+      transactionBytes: transaction.serializeMessage()
+    })
     // console.log(tx)
     updateCounterVersion(counterVersion + 1)
   }
 
   const airDrop = async () => {
     const airdropSignature = await connection.requestAirdrop(
-      new web3.PublicKey(addressStr),
+      new PublicKey(addressStr),
       10000000000
     )
     const latestBlockHash = await connection.getLatestBlockhash()
@@ -66,9 +100,7 @@ function IndexPopup() {
     if (addressStr) {
       const initWallet = async () => {
         console.log("init wallet ", addressStr)
-        const balance = await connection.getBalance(
-          new web3.PublicKey(addressStr)
-        )
+        const balance = await connection.getBalance(new PublicKey(addressStr))
         setBalance(balance)
       }
       initWallet()
