@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "package": "plasmo package",
+    "cargo:build": "cargo build-bpf --manifest-path=./contract/solana-counter/Cargo.toml --bpf-out-dir=dist/contract",
+    "cargo:deploy": "solana program deploy ./dist/contract/solana_counter.so"
   },
   "dependencies": {
     "@plasmohq/storage": "^1.9.0",

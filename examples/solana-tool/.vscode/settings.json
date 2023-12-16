@@ -1,0 +1,5 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./contract/solana-counter/Cargo.toml"
+    ]
+}
