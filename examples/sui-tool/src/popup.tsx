@@ -77,14 +77,14 @@ function IndexPopup() {
   return (
     <div
       style={{
-        width: "500px",
-        height: "500px"
+        width: "550px",
+        height: "550px"
       }}
       className="plasmo-p-5 plasmo-flex-auto">
-      <div>Address : {address}</div>
-      <div>Balance : {balance}</div>
-      <div>Counter: {counter}</div>
-      <div>
+      <div className="plasmo-m-2">Address : {address}</div>
+      <div className="plasmo-m-2">Balance : {balance}</div>
+      <div className="plasmo-m-2">Counter: {counter}</div>
+      <div className="plasmo-m-2">
         <button
           className="plasmo-flex plasmo-flex-row plasmo-items-center plasmo-px-4 plasmo-py-2 plasmo-text-sm plasmo-rounded-lg plasmo-transition-all plasmo-border-none
       plasmo-shadow-lg hover:plasmo-shadow-md
