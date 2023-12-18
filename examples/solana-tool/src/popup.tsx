@@ -25,7 +25,7 @@ function IndexPopup() {
   //   "0xca9b2043af3accad328bbae361a4941a778ebc6d2f02ffe09b001c06ed643934"
 
   // let connection = new Connection(clusterApiUrl("testnet"))
-  let connection = new Connection(rpcUrl, "finalized")
+  let connection = new Connection(rpcUrl, "confirmed")
 
   const [addressStr] = useStorage("addressStr")
   const [balance, setBalance] = useState(0)
@@ -70,10 +70,19 @@ function IndexPopup() {
     )
 
     console.log("transaction : -> ", transaction)
-    console.log("serialized transaction : -> ", transaction.serializeMessage())
+    console.log(
+      "serialized transaction : -> ",
+      transaction.serialize({
+        verifySignatures: false,
+        requireAllSignatures: false
+      })
+    )
     const tx = await chrome.runtime.sendMessage({
       action: "executeTransaction",
-      transactionBytes: transaction.serializeMessage()
+      transactionBytes: transaction.serialize({
+        verifySignatures: false,
+        requireAllSignatures: false
+      })
     })
     // console.log(tx)
     updateCounterVersion(counterVersion + 1)

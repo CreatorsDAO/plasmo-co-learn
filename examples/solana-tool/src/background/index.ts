@@ -1,9 +1,17 @@
-import { Keypair, VersionedTransaction } from "@solana/web3.js"
-import nacl from "tweetnacl"
+import {
+  Connection,
+  Keypair,
+  sendAndConfirmTransaction,
+  Transaction
+} from "@solana/web3.js"
+
+// import nacl from "tweetnacl"
 
 // https://docs.solana.com/developing/clients/javascript-reference
 
 import { Storage } from "@plasmohq/storage"
+
+import { rpcUrl } from "~config"
 
 export {}
 
@@ -20,6 +28,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === "executeTransaction") {
+    let connection = new Connection(rpcUrl, "confirmed")
     // const client = new SuiClient({ url: getFullnodeUrl("testnet") })
     const transactionBuffer = message.transactionBytes as Buffer
     console.log("transactionBytes -> ", transactionBuffer)
@@ -28,19 +37,20 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     const privateKeyBytes = Buffer.from(privateKeyStr, "hex")
 
     const signer = Keypair.fromSecretKey(privateKeyBytes)
-    const signature = nacl.sign.detached(
-      Buffer.from(transactionBuffer),
-      signer.secretKey
-    )
-    console.log("signature->", signature)
+    // const signature = nacl.sign.detached(
+    //   Buffer.from(transactionBuffer),
+    //   signer.secretKey
+    // )
+    // console.log("signature->", signature)
 
-    const transaction = VersionedTransaction.deserialize(
-      Buffer.from(transactionBuffer)
-    )
-    console.log(transaction)
+    const transaction = Transaction.from(Buffer.from(transactionBuffer))
+    console.log("reload transaction: ", transaction)
     // transaction.addSignature(signer.publicKey, Buffer.from("jellyfish"))
 
-    // console.log("transaction->", transaction)
+    const tx = await sendAndConfirmTransaction(connection, transaction, [
+      signer
+    ])
+    // console.log("transaction detail : ", tx)
 
     // // sendResponse({ privateKeyBytes })
     // const signer = Ed25519Keypair.fromSecretKey(privateKeyBytes)
