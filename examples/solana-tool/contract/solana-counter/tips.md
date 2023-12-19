@@ -5,3 +5,7 @@ error: not a directory: '/home/chandan/.local/share/solana/install/releases/1.10
 清理 缓存框架
 
 rm -rf ~/.cache/solana/*
+
+
+
+https://docs.solana.com/developing/clients/javascript-api

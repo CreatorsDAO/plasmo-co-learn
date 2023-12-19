@@ -1,14 +1,10 @@
-// import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client"
-// import { getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui.js/faucet"
-// import { TransactionBlock } from "@mysten/sui.js/transactions"
-// import { MIST_PER_SUI } from "@mysten/sui.js/utils"
-
 import {
   Connection,
   PublicKey,
   SystemProgram,
   Transaction,
-  TransactionInstruction
+  TransactionInstruction,
+  TransactionMessage
 } from "@solana/web3.js"
 import { useEffect, useState } from "react"
 
@@ -41,48 +37,45 @@ function IndexPopup() {
     let blockhash = (await connection.getLatestBlockhash("finalized")).blockhash
     console.log("blockhash : -> ", blockhash)
 
-    let transaction = new Transaction()
-    transaction.recentBlockhash = blockhash
-    transaction.feePayer = new PublicKey(addressStr)
+    const messageV0 = new TransactionMessage({
+      recentBlockhash: blockhash,
+      payerKey: new PublicKey(addressStr),
+      instructions: [
+        new TransactionInstruction({
+          keys: [
+            {
+              pubkey: new PublicKey(addressStr),
+              isSigner: true,
+              isWritable: true
+            },
+            {
+              pubkey: counterAccount,
+              isSigner: false,
+              isWritable: true
+            },
+            {
+              pubkey: SystemProgram.programId,
+              isSigner: false,
+              isWritable: false
+            }
+          ],
+          programId: new PublicKey(programID),
+          data: Buffer.from([1])
+        })
+      ]
+    })
 
-    transaction.add(
-      new TransactionInstruction({
-        keys: [
-          {
-            pubkey: new PublicKey(addressStr),
-            isSigner: true,
-            isWritable: true
-          },
-          {
-            pubkey: counterAccount,
-            isSigner: false,
-            isWritable: true
-          },
-          {
-            pubkey: SystemProgram.programId,
-            isSigner: false,
-            isWritable: false
-          }
-        ],
-        programId: new PublicKey(programID),
-        data: Buffer.from([1])
-      })
-    )
-
-    console.log("transaction : -> ", transaction)
-    console.log(
-      "serialized transaction : -> ",
-      transaction.serialize({
-        verifySignatures: false,
-        requireAllSignatures: false
-      })
-    )
+    // console.log("transaction : -> ", transaction)
+    // console.log(
+    //   "serialized transaction : -> ",
+    //   transaction.serialize({
+    //     verifySignatures: false,
+    //     requireAllSignatures: false
+    //   })
+    // )
     const tx = await chrome.runtime.sendMessage({
       action: "executeTransaction",
-      transactionBytes: transaction.serialize({
-        verifySignatures: false,
-        requireAllSignatures: false
-      })
+      transactionBytes: messageV0.compileToV0Message().serialize()
     })
     // console.log(tx)
     updateCounterVersion(counterVersion + 1)

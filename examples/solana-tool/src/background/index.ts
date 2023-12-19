@@ -1,11 +1,12 @@
 import {
   Connection,
   Keypair,
+  sendAndConfirmRawTransaction,
   sendAndConfirmTransaction,
-  Transaction
+  Transaction,
+  TransactionMessage
 } from "@solana/web3.js"
-
-// import nacl from "tweetnacl"
+import nacl from "tweetnacl"
 
 // https://docs.solana.com/developing/clients/javascript-reference
 
@@ -30,26 +31,36 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === "executeTransaction") {
     let connection = new Connection(rpcUrl, "confirmed")
     // const client = new SuiClient({ url: getFullnodeUrl("testnet") })
-    const transactionBuffer = message.transactionBytes as Buffer
-    console.log("transactionBytes -> ", transactionBuffer)
+    const v1MessageBuffer = message.transactionBytes as Uint8Array
+    console.log("transactionBytes -> ", v1MessageBuffer)
     // const txb = TransactionBlock.from(transactionBytes)
     const privateKeyStr = await storage.get("secret")
     const privateKeyBytes = Buffer.from(privateKeyStr, "hex")
 
     const signer = Keypair.fromSecretKey(privateKeyBytes)
-    // const signature = nacl.sign.detached(
-    //   Buffer.from(transactionBuffer),
-    //   signer.secretKey
+
+    // const messageV0 = TransactionMessage.decompile(v1MessageBuffer)
+    // // const transaction = Transaction.from(Buffer.from(transactionBuffer))
+    // console.log("reload transaction: ", transaction)
+    // transaction.addSignature(signer.publicKey, Buffer.from(signature))
+    // console.log("signed transaction: ", transaction)
+
+    // // TODO: sign transaction and send it to solana
+    // // https://docs.solana.com/developing/clients/javascript-reference
+    // const tx = await connection.sendRawTransaction(
+    //   transaction.serialize({
+    //     verifySignatures: true,
+    //     requireAllSignatures: true
+    //   }),
+    //   {
+    //     skipPreflight: true
+    //   }
     // )
-    // console.log("signature->", signature)
+    // console.log(tx)
 
-    const transaction = Transaction.from(Buffer.from(transactionBuffer))
-    console.log("reload transaction: ", transaction)
-    // transaction.addSignature(signer.publicKey, Buffer.from("jellyfish"))
-
-    const tx = await sendAndConfirmTransaction(connection, transaction, [
-      signer
-    ])
+    // const tx = await sendAndConfirmTransaction(connection, transaction, [
+    //   signer
+    // ])
     // console.log("transaction detail : ", tx)
 
     // // sendResponse({ privateKeyBytes })
