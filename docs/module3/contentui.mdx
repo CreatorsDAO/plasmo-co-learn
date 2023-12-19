@@ -9,9 +9,9 @@ sidebar_position: 4
 同 `Content Script` 处于同等重要的地位，你可以选择，在各个页面中，注入包含 UI 的部分。
 `Plasmo` 对这部分做了封装，你可以很轻易完成需求。
 
-在`Plasmo`中 首先支持在 Web 网页中嵌入 React 、Svelte3、Vue3 组件。 这类功能叫做 `Content Script UI`。
+在`Plasmo`中 首先支持在 Web 网页中嵌入 React 、Svelte3、Vue3 组件。 这类功能叫做 `Content Script UI`, 以下简称 `CSUI`。
 
-一个浏览器扩展可以包含多个 `Content Script UI` 组件， 通过 导出 [Config](https://docs.plasmo.com/framework/content-scripts#config) 对象，可以控制组件的行为。
+一个浏览器扩展可以包含多个 `CSUI` 组件， 通过 导出 [Config](https://docs.plasmo.com/framework/content-scripts#config) 对象，可以控制组件的行为。
 
 ### 注入一个 `React`组件
 
@@ -42,9 +42,113 @@ export default CustomButton;
 `Plasmo` 创建了一个 [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM)。
 在其中挂载了你导出的 UI 组件。这种机制有效保证了你的组件样式的独立性，即不受页面样式影响。
 
-## Life Cycle
+## 生命周期
+
+`Plasmo` 的 `CSUI` 负责协调一个专门用于在内容脚本中挂载和卸载你的 React、Vue 或 Svelte 组件的生命周期。
+尽管每个 UI 库/框架的挂载 API 略有不同，但顶级生命周期大体相同：
+
+1. 获取一个 [Anchor](#anchor) (定位器)
+2. 创建，或者获取一个 [容器](#root-container)， 该容器用于定位 `CSUI` 的元素。
+3. [Render](#renderer) 渲染导出 的 UI 组件。
+
+### 相关概念
+
+| 名词           | 相关描述                                            |
+| :------------- | :-------------------------------------------------- |
+| Anchor         | 告诉 CSUI 挂载你的组件的位置和方法。                |
+| Anchor-getter  | 告诉 CSUI 怎么找到你的 Anchor。                     |
+| Overlay        | Overlay 模式挂载你的组件，挂载在当前页面的 最上层。 |
+| Inline         | 挂载你的组件在页面的 Dom 里，紧挨着你的 目标 Dom。  |
+| Root Container | 一个 由 Plasmo 创建的 ShadowDOM 用来包装你的组件。  |
+| Renderer       | 最上层的渲染结构，包含了以上的所有方法。            |
+
+## Anchor
+
+![Find Anchor](./find_anchor.jpg)
+
+以上流程图描述了在网页中处理（ANCHOR）元素的一系列步骤。
+
+流程开始于“START”，然后遵循以下步骤：
+
+1. **检查是否存在 ANCHOR 获取器（has ANCHOR getter?）**：
+
+   - 如果没有（NO），则在`document.body`中创建一个覆盖层锚点（overlay ANCHOR）。
+   - 如果有（YES），则继续下一个步骤。
+
+2. **遍历找到的每一个锚点（for each ANCHOR found）**：
+   这一步是对页面中所有锚点进行循环。
+
+3. **检查锚点是否为内联（is inline?）**：
+   - 如果锚点是内联的（YES），那么创建一个根容器（ROOT CONTAINER）。
+   - 如果锚点不是内联的（NO），那么定位到顶层的根容器（locate top-level ROOT CONTAINER）。
+
+定义一个 `Anchor`
+
+```ts
+export type PlasmoCSUIAnchor = {
+  type: "overlay" | "inline";
+  element: Element;
+};
+```
+
+默认的 `Plasmo` 提供一个默认的 Anchor 他在 `document.body` 作为 Element , 以 Overlay 模式呈现。
+
+```ts
+{
+  type: "overlay",
+  element: document.body
+}
+```
+
+如果 `CSUI` 文件中定义了 getter 函数 ，那么 `CSUI` 将会使用该函数返回的元素作为 Anchor。
+因为 ，函数定义可以使用 async 异步，所以，你也就可以掌控你的 Anchor 的位置。
+比如，你可以一直等待页面上出现某个元素，然后，再返回定义的 元素。
+
+函数定义为 : **getOverlayAnchor** 和 **getInlineAnchor**。
+
+当你导出的 UI 元素需要和 Anchor 交互的时候，你可以传递 `PlasmoCSUIProps`属性。
+
+```ts
+import type { PlasmoCSUIProps } from "plasmo";
+
+const AnchorTypePrinter: FC<PlasmoCSUIProps> = ({ anchor }) => {
+  return <span>{anchor.type}</span>;
+};
+
+export default AnchorTypePrinter;
+```
+
+### Overlay
+
+![Overlay](./overlay.jpg)
+
+### Inline
+
+## Root Container
+
+## Renderer
 
 ## Style
+
+### Raw CSS Text
+
+### Import Stylesheet
+
+### CSS-in-JS
+
+### CSS Modules
+
+### Custom Font
+
+### Styling the Shadow DOM
+
+### Inherit the Web Page's Style
+
+## Caveats
+
+### CSS Variables
+
+### Root Container Style
 
 :::tip
 
