@@ -122,7 +122,82 @@ export default AnchorTypePrinter;
 
 ![Overlay](./overlay.jpg)
 
+Overlay 的嵌入模式，是以当前页面最大的 z-index 渲染导出的 Dom 结构的。
+一个 `CSUI` 文件可以导出多个 Overlay Anchor，每一个 Anchor 都会派生出一个容器， 以渲染新的 Dom 。
+一个 CSUI 内的所有容器，从属于同一个根容器。
+
+单一的 Overlay Anchor
+
+```ts
+import type { PlasmoGetOverlayAnchor } from "plasmo";
+
+export const getOverlayAnchor: PlasmoGetOverlayAnchor = async () =>
+  document.querySelector("#pricing");
+```
+
+返回 多个 Anchor
+
+```ts
+import type { PlasmoGetOverlayAnchorList } from "plasmo";
+
+export const getOverlayAnchorList: PlasmoGetOverlayAnchorList = async () =>
+  document.querySelectorAll("a");
+```
+
+:::tip
+getOverlayAnchorList 暂时还不支持动态获取，比如，CSUI 渲染完后新加入的 dom ，无法完成后期的渲染。
+:::
+
+#### watch 更新位置
+
+默认 Overlay Anchor 监听了 window 的滚动事件，保证 自己和 Anchor 定位的元素对齐。
+由于某些其他原因，位置变动的时候，无法跟随。Plasmo 给大家提供了 PlasmoWatchOverlayAnchor , 可以轮询变更定位器的位置。
+
+```ts title="with-content-scripts-ui/contents/plasmo-overlay-watch.tsx"
+import type { PlasmoWatchOverlayAnchor } from "plasmo";
+
+export const watchOverlayAnchor: PlasmoWatchOverlayAnchor = (
+  updatePosition
+) => {
+  const interval = setInterval(() => {
+    updatePosition();
+  }, 8472);
+
+  // Clear the interval when unmounted
+  return () => {
+    clearInterval(interval);
+  };
+};
+```
+
+具体实例 : [with-content-scripts-ui/contents/plasmo-overlay-watch.tsx](https://github.com/PlasmoHQ/examples/blob/main/with-content-scripts-ui/contents/plasmo-overlay-watch.tsx)
+
 ### Inline
+
+![Inline](./inline.jpg)
+
+Inline 模式是把 CSUI 的元素嵌入到 web 页面中，紧挨着你定位到的元素。
+同上一个 CSUI 文件中定位到 一个或多个 Anchor, 派生出 Inline 模式的 容器，承载你导出的 Dom.
+
+单一的 Inline Anchor
+
+```ts
+import type { PlasmoGetInlineAnchor } from "plasmo";
+
+export const getInlineAnchor: PlasmoGetInlineAnchor = async () =>
+  document.querySelector("#pricing");
+```
+
+返回多个 Inline Anchor
+
+```ts
+import type { PlasmoGetInlineAnchorList } from "plasmo";
+
+export const getInlineAnchorList: PlasmoGetInlineAnchorList = async () =>
+  document.querySelectorAll("a");
+```
+
+官方实例 : [with-content-scripts-ui/contents/plasmo-inline](https://github.com/PlasmoHQ/examples/blob/main/with-content-scripts-ui/contents/plasmo-inline.tsx)
 
 ## Root Container
 
