@@ -201,32 +201,92 @@ export const getInlineAnchorList: PlasmoGetInlineAnchorList = async () =>
 
 ## Root Container
 
-## Renderer
+![root container](./root-container.jpg)
 
-## Style
+Root Container 是你嵌入页面的 UI Dom 最终挂载的地方。
 
-### Raw CSS Text
+默认情况下，Plasmo 使用了 plasmo-csui 的自定义标签，作为页面的 ShadowDOM 元素。
 
-### Import Stylesheet
+使用这种机制，你就可以实现自定义样式，同时和页面的主样式隔离开。
 
-### CSS-in-JS
+### 自定义挂载 Dom
 
-### CSS Modules
+Root Container 会创建 shadowHost 来其纳入当前页面的 Dom 树。
 
-### Custom Font
+默认情况下的注入
 
-### Styling the Shadow DOM
+1.  inline anchor : `Plasmo` 在 指定定位元素的后边创建 shadowHost
+2.  Overlay Anchor : 会在 document.body 前边注入。
 
-### Inherit the Web Page's Style
+你可以通过导出一个 `mountShadowHost` 函数实现自定义挂载。
 
-## Caveats
+```ts
+import type { PlasmoMountShadowHost } from "plasmo";
 
-### CSS Variables
+export const mountShadowHost: PlasmoMountShadowHost = ({
+  shadowHost,
+  anchor,
+  mountState,
+}) => {
+  anchor.element.appendChild(shadowHost);
+  mountState.observer.disconnect(); // OPTIONAL DEMO: stop the observer as needed
+};
+```
 
-### Root Container Style
+### 关闭 Shadow Root
+
+默认情况下 Shadow Root 是 open 的状态，即 允许任何人(扩展开发者、扩展使用者)查看 Shadow Root 的 Dom 树。
+有时候，你不希望这种情况发生，你需要导出 PlasmoCreateShadowRoot 函数实现自定义挂载。
+
+```ts
+import type { PlasmoCreateShadowRoot } from "plasmo";
+
+export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
+  shadowHost.attachShadow({ mode: "closed" });
+```
 
 :::tip
+经过实验，暂时没有发现什么区别。
+:::
 
+### 自定义样式
+
+Plasmo 内置 给扩展开发者提供了一种安全的修改 CSUI 样式的机制。
+
+通过 getStryle 返回一个 [Style Element](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
+
+更多样式需求，参看 [Style](#style) 部分。
+
+### 自定义 Root 容器
+
+有时候，你需要完全替换掉 Plasmo 提供的 Shadow DOM 以满足你自己的需求。
+
+比如 ，你可能想从页面中选择一个元素，作为 Root Container 而不是创建一个。
+
+你可以通过 导出 getRootContainer 实现自定义容器的需求
+
+```ts
+import type { PlasmoGetRootContainer } from "plasmo";
+export const getRootContainer = () => document.getElementById("itero");
+```
+
+这么做的其他几个理由:
+
+1. 扩展可能集成宿主页面的样式
+2. 扩展想把 CSUI 元素挂在到页面上，而不是使用 CSUI 本身。
+3. 扩展打算使用 iframe 作为内容载体。
+
+:::tip
+当你使用 getRootContainer 导出函数自定义 Root Container 以后。 Plasmo 将会忽略其他的内置的函数，
+比如 getStyle getShadowHostId 。如果你需要这些函数，你必须手工调用。
+:::
+
+官方提供的实例 : [with-content-scripts-ui/contents/plasmo-root-container.tsx](https://github.com/PlasmoHQ/examples/blob/main/with-content-scripts-ui/contents/plasmo-root-container.tsx)
+
+## Renderer
+
+![render](./render.jpg)
+
+:::tip
 https://docs.plasmo.com/framework/content-scripts-ui
-
 :::

@@ -1,0 +1,53 @@
+---
+sidebar_position: 5
+---
+
+# Content Script UI Style
+
+## Style
+
+如上文所说，当 自定义 Root 容器后，plasmo 允许扩展开发者安全的给 CSUI 模块提供样式。
+Plasmo 保证了如下的两点:
+
+1. 导出的样式，不会泄露到 web 页面本身
+2. 页面的样式不会影响到 CSUI 组件的样式。
+
+### Raw CSS Text
+
+你可以通过 给 CSUI 元素 导出 getStyle 函数添加样式。
+
+```ts title="content.tsx"
+import type { PlasmoGetStyle } from "plasmo";
+
+export const getStyle: PlasmoGetStyle = () => {
+  const style = document.createElement("style");
+  style.textContent = `
+    p {
+      background-color: yellow;
+    }
+  `;
+  return style;
+};
+```
+
+### Import Stylesheet
+
+### CSS-in-JS
+
+### CSS Modules
+
+### Custom Font
+
+### Styling the Shadow DOM
+
+### Inherit the Web Page's Style
+
+## Caveats
+
+### CSS Variables
+
+### Root Container Style
+
+:::tip
+https://docs.plasmo.com/framework/content-scripts-ui
+:::
