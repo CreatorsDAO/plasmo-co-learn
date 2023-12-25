@@ -88,7 +88,63 @@ export default Overlay;
 
 ### Custom Font
 
+在 Plasmo 的 CSUI 中使用字体，你需要先在文件中 引入 css 文件。
+浏览器不识别在 ShadowDom 中声明的字体。你必须在全局中引入他们。
+
+1. 在 assets 目录中添加你的 字体文件。
+2. 创建使用字体文件的 css 文件，你需要引入字体文件的时候，按照 data-base64 的格式引入。
+
+```css title="font.css"
+@font-face {
+  font-family: "Fascinate";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(data-base64:~assets/Fascinate.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+```
+
+3. 在 CSUI 的配置中声明 css
+
+```ts title="content.tsx"
+export const config: PlasmoCSConfig = {
+  matches: ["https://www.plasmo.com/*"],
+  css: ["font.css"],
+};
+```
+
+4. 当浏览器注册字体后，你就可以使用他们了。
+
+```css
+.hw-top {
+  background: red;
+  color: white;
+  font-family: "Fascinate";
+}
+```
+
+官方提供的 实例 ： [with-content-scripts-ui/contents/plasmo-overlay](https://github.com/PlasmoHQ/examples/blob/main/with-content-scripts-ui/contents/plasmo-overlay.tsx)
+
 ### Styling the Shadow DOM
+
+ShadowDom 的 是#plasmo-shadow-container 的 plasmo-inline ，所以，可以用对应的 css 装饰器修改容器样式。
+
+```css title="style.css"
+#plasmo-shadow-container {
+  z-index: 99999;
+}
+
+#plasmo-inline {
+  background: blue;
+}
+```
+
+:::tip
+如果某些样式被覆盖了。需要注意下 [ Caveats: Root Container Style ](https://docs.plasmo.com/framework/content-scripts-ui/styling#root-container-style)
+:::
 
 ### Inherit the Web Page's Style
 
