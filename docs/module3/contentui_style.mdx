@@ -32,9 +32,59 @@ export const getStyle: PlasmoGetStyle = () => {
 
 ### Import Stylesheet
 
+如果，你想引入样式文件，你可以指定 data-text 的 url 前缀。
+
+```ts title="content.ts"
+import styleText from "data-text:./style.scss";
+import type { PlasmoGetStyle } from "plasmo";
+
+export const getStyle: PlasmoGetStyle = () => {
+  const style = document.createElement("style");
+  style.textContent = styleText;
+  return style;
+};
+```
+
 ### CSS-in-JS
 
+getStyle 的 API 也支持 hydrate 样式的 CSS-in-JS cache , 比如 [with-emotion](https://github.com/PlasmoHQ/examples/blob/main/with-emotion/content.tsx)
+
+```ts
+import createCache from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
+import type { PlasmoGetStyle } from "plasmo";
+
+const styleElement = document.createElement("style");
+
+const styleCache = createCache({
+  key: "plasmo-emotion-cache",
+  prepend: true,
+  container: styleElement,
+});
+
+export const getStyle: PlasmoGetStyle = () => styleElement;
+```
+
 ### CSS Modules
+
+模块的方式引入 css，可以动态提取其中的 className 作为元素的样式。
+
+```ts title="content.ts"
+import styleText from "data-text:./style.module.css";
+import type { PlasmoCSConfig } from "plasmo";
+
+import * as style from "./style.module.css";
+
+export const getStyle = () => {
+  const style = document.createElement("style");
+  style.textContent = styleText;
+  return style;
+};
+
+const Overlay = () => <h1 className={style.header}>Captain Log</h1>;
+
+export default Overlay;
+```
 
 ### Custom Font
 
