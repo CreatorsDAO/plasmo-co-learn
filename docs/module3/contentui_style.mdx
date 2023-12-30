@@ -65,7 +65,7 @@ const styleCache = createCache({
 export const getStyle: PlasmoGetStyle = () => styleElement;
 ```
 
-### CSS Modules
+### CSS 模块
 
 模块的方式引入 css，可以动态提取其中的 className 作为元素的样式。
 
@@ -86,7 +86,7 @@ const Overlay = () => <h1 className={style.header}>Captain Log</h1>;
 export default Overlay;
 ```
 
-### Custom Font
+### 自定义字体 Custom Font
 
 在 Plasmo 的 CSUI 中使用字体，你需要先在文件中 引入 css 文件。
 浏览器不识别在 ShadowDom 中声明的字体。你必须在全局中引入他们。
@@ -146,14 +146,46 @@ ShadowDom 的 是#plasmo-shadow-container 的 plasmo-inline ，所以，可以�
 如果某些样式被覆盖了。需要注意下 [ Caveats: Root Container Style ](https://docs.plasmo.com/framework/content-scripts-ui/styling#root-container-style)
 :::
 
-### Inherit the Web Page's Style
+### 继承页面样式
+
+如果你想继承当前页面的样式，你需要覆盖内置的 `Root Container` , 把你的 CSUI 元素直接挂载到页面的 Dom 中。
+
+[自定义 Root Container](contentui#custom-root-container)
 
 ## Caveats
 
-### CSS Variables
+框架的通用样式封装（目前为止）还无法处理一些情况。以下是一些常见的注意事项：
 
-### Root Container Style
+### 变量冲突 CSS Variables
 
-:::tip
-https://docs.plasmo.com/framework/content-scripts-ui
-:::
+CSS 变量在同一个浏览器标签页的所有框架之间是共享的。这意味着，如果网页在 :root 上下文中声明了一些 CSS 变量，它们会优先于你的变量。
+
+为了解决 CSUI 和网页之间 CSS 变量的共享问题，你可以按照如下的方法解决：
+
+- 为你的 CSS 变量声明一个独特的前缀命名空间。
+- 将你的 CSS 变量提升到 :host 范围内。
+- 在 iframe 内部挂载 CSUI 元素，它拥有自己的 head 和 body 。
+
+### Root Container 的样式
+
+如果你的网页样式使用了一个 `*` 来识别元素的通用样式，他将会覆盖 `Root Container` 的样式。
+
+实例说明：
+
+假如网页样式中存在如下的 样式内容:
+
+```css
+* {
+  display: block;
+}
+```
+
+以上的样式也会将 CSUI 元素的容器 `block` 方式展示。 这种情况下，你可以通过 Root Container 的内联样式来做到合适的方式。
+
+或者你也可以使用 CSS 声明，提升一些样式的优先级，避免此类事情的方式。
+
+```css
+#plasmo-shadow-container {
+  z-index: 2147483646 !important;
+}
+```
