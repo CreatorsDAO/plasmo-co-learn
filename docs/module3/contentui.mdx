@@ -283,10 +283,110 @@ export const getRootContainer = () => document.getElementById("itero");
 
 官方提供的实例 : [with-content-scripts-ui/contents/plasmo-root-container.tsx](https://github.com/PlasmoHQ/examples/blob/main/with-content-scripts-ui/contents/plasmo-root-container.tsx)
 
-## Renderer
+## 渲染器 (Renderer)
 
 ![render](./render.jpg)
 
+渲染器一直监控网站的 Dom 结构，随时发现 Root Container 的存在。
+发现后，就会跟踪 Root Container 和 内部的 Anchor 元素 的链接关系。
+当一个稳定的 Root Container 被发现后，渲染器就会把 CSUI 组件中导出的 UI 元素 挂载到 Root Container。
+根据 Anchor 定义的不同，Root Container 会被表现为 Inline 或者 Overlay。
+
+### 检测并优化 Root Container 的删除
+
+当一个网站的 Dom 结构被改变后，一个 Root Container 可能会被删除。
+
+比如你的 CSUI 组件工作在一个 邮件列表的页面上，挂载在每一个邮件元素的 UI 组件上。
+当你的邮件被删除的时候，对应的 CSUI 组件也需要被删除。
+
+为了方便检查 UI 组件的删除，CSUI 渲染器会将每一个 挂载了 CSUI 元素的容器和 window.document 做对比。
+这个检查可以被优化为 O(1) 的复杂度，你只需要导出一个 getShadowHostId 函数即可。
+
+```ts
+import type { PlasmoGetShadowHostId } from "plasmo";
+export const getShadowHostId: PlasmoGetShadowHostId = () => `adonais`;
+```
+
+这个函数允许开发者根据 anchor 自己定义 ID
+
+```ts
+import type { PlasmoGetShadowHostId } from "plasmo";
+
+export const getShadowHostId: PlasmoGetShadowHostId = ({ element }) =>
+  element.getAttribute("data-custom-id") + `-pollax-iv`;
+```
+
+### 自定义渲染器
+
+开发者可以导出一个 `render`函数，覆盖默认的渲染器。你将获得如下的能力
+
+1. 提供自定义的 `Inline container` 或者 `Overlay container`
+2. 自定义挂载逻辑
+3. 提供一个 `MutationObserver` 观察者函数。
+
+比如，你可以这样使用自定义容器
+
+```ts
+import type { PlasmoRender } from "plasmo";
+
+import { CustomContainer } from "~components/custom-container";
+
+const EngageOverlay = () => <span>ENGAGE</span>;
+
+// This function overrides the default `createRootContainer`
+export const getRootContainer = () =>
+  new Promise((resolve) => {
+    const checkInterval = setInterval(() => {
+      const rootContainer = document.getElementById("itero");
+      if (rootContainer) {
+        clearInterval(checkInterval);
+        resolve(rootContainer);
+      }
+    }, 137);
+  });
+
+export const render: PlasmoRender = async ({
+  anchor, // the observed anchor, OR document.body.
+  createRootContainer, // This creates the default root container
+}) => {
+  const rootContainer = await createRootContainer();
+
+  const root = createRoot(rootContainer); // Any root
+  root.render(
+    <CustomContainer>
+      <EngageOverlay />
+    </CustomContainer>
+  );
+};
+```
+
+### 使用内置的 `Inline Container` 或者 `Overlay Container`
+
+```ts
+import type { PlasmoRender } from "plasmo";
+
+const AnchorOverlay = ({ anchor }) => <span>{anchor.innerText}</span>;
+
+export const render: PlasmoRender = async (
+  {
+    anchor, // the observed anchor, OR document.body.
+    createRootContainer, // This creates the default root container
+  },
+  _,
+  OverlayCSUIContainer
+) => {
+  const rootContainer = await createRootContainer();
+
+  const root = createRoot(rootContainer); // Any root
+  root.render(
+    // You must pass down an anchor to mount the default container. Here we pass the default one
+    <OverlayCSUIContainer anchor={anchor}>
+      <AnchorOverlay anchor={anchor} />
+    </OverlayCSUIContainer>
+  );
+};
+```
+
 :::tip
-https://docs.plasmo.com/framework/content-scripts-ui
+如果你想自定义观察者函数，那么不要导出 `anchor-getter` 函数，否则内置的 观察者将会被触发。
 :::
