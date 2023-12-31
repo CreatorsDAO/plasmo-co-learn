@@ -2,9 +2,7 @@ import {
   Connection,
   PublicKey,
   SystemProgram,
-  Transaction,
-  TransactionInstruction,
-  TransactionMessage
+  Transaction
 } from "@solana/web3.js"
 import { useEffect, useState } from "react"
 
@@ -17,16 +15,13 @@ import "~style.css"
 function IndexPopup() {
   const counterName = "creators"
   const programID = "ASWqcq5N7Zx97FjZGg1jFKJNjdXPqZNzq9n3rnUjsBdD"
-  // const counterID =
-  //   "0xca9b2043af3accad328bbae361a4941a778ebc6d2f02ffe09b001c06ed643934"
-
-  // let connection = new Connection(clusterApiUrl("testnet"))
   let connection = new Connection(rpcUrl, "confirmed")
 
   const [addressStr] = useStorage("addressStr")
   const [balance, setBalance] = useState(0)
   const [counter, setCounter] = useState(0)
   const [counterVersion, updateCounterVersion] = useState(0)
+  const [sx, setSx] = useState<any>(null)
 
   const [counterAccount, bump_seed] = PublicKey.findProgramAddressSync(
     [Buffer.from(counterName)],
@@ -37,47 +32,22 @@ function IndexPopup() {
     let blockhash = (await connection.getLatestBlockhash("finalized")).blockhash
     console.log("blockhash : -> ", blockhash)
 
-    const messageV0 = new TransactionMessage({
-      recentBlockhash: blockhash,
-      payerKey: new PublicKey(addressStr),
-      instructions: [
-        new TransactionInstruction({
-          keys: [
-            {
-              pubkey: new PublicKey(addressStr),
-              isSigner: true,
-              isWritable: true
-            },
-            {
-              pubkey: counterAccount,
-              isSigner: false,
-              isWritable: true
-            },
-            {
-              pubkey: SystemProgram.programId,
-              isSigner: false,
-              isWritable: false
-            }
-          ],
-          programId: new PublicKey(programID),
-          data: Buffer.from([1])
-        })
-      ]
+    const tx = new Transaction()
+    tx.feePayer = new PublicKey(addressStr)
+    tx.recentBlockhash = blockhash
+    const ix = SystemProgram.transfer({
+      fromPubkey: new PublicKey(addressStr),
+      toPubkey: new PublicKey(addressStr),
+      lamports: 1000000000
     })
+    tx.add(ix)
 
-    // console.log("transaction : -> ", transaction)
-    // console.log(
-    //   "serialized transaction : -> ",
-    //   transaction.serialize({
-    //     verifySignatures: false,
-    //     requireAllSignatures: false
-    //   })
-    // )
-    const tx = await chrome.runtime.sendMessage({
+    const sx = await chrome.runtime.sendMessage({
       action: "executeTransaction",
-      transactionBytes: messageV0.compileToV0Message().serialize()
+      transactionBytes: tx.serializeMessage()
     })
-    // console.log(tx)
+    console.log(sx)
+    setSx(sx)
     updateCounterVersion(counterVersion + 1)
   }
 
@@ -113,18 +83,6 @@ function IndexPopup() {
     const updateCounter = async () => {
       const account = await connection.getAccountInfo(counterAccount)
       console.log(account)
-      // const counter = await suiClient.getObject({
-      //   id: counterID,
-      //   options: {
-      //     showContent: true
-      //   }
-      // })
-      // if (counter.data && counter.data.content) {
-      //   const content = counter.data.content as any
-      //   if (counter && content.fields && content.fields.value) {
-      //     setCounter(content.fields.value)
-      //   }
-      // }
     }
     updateCounter()
   }, [counterVersion])
@@ -160,6 +118,8 @@ function IndexPopup() {
           onClick={addCounter}>
           Add Counter
         </button>
+
+        {sx}
       </div>
     </div>
   )
