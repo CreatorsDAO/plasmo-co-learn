@@ -2,7 +2,8 @@ import {
   Connection,
   PublicKey,
   SystemProgram,
-  Transaction
+  Transaction,
+  TransactionInstruction
 } from "@solana/web3.js"
 import { useEffect, useState } from "react"
 
@@ -41,6 +42,30 @@ function IndexPopup() {
       lamports: 1000000000
     })
     tx.add(ix)
+
+    tx.add(
+      new TransactionInstruction({
+        keys: [
+          {
+            pubkey: new PublicKey(addressStr),
+            isSigner: true,
+            isWritable: true
+          },
+          {
+            pubkey: counterAccount,
+            isSigner: false,
+            isWritable: true
+          },
+          {
+            pubkey: SystemProgram.programId,
+            isSigner: false,
+            isWritable: false
+          }
+        ],
+        data: Buffer.from(Uint8Array.of(1)),
+        programId: new PublicKey(programID)
+      })
+    )
 
     const sx = await chrome.runtime.sendMessage({
       action: "executeTransaction",
@@ -119,7 +144,15 @@ function IndexPopup() {
           Add Counter
         </button>
 
-        {sx}
+        <div className="plasmo-mt-5">
+          {sx && (
+            <a
+              target="_blank"
+              href={`https://explorer.solana.com/tx/${sx}?cluster=custom`}>
+              {sx}
+            </a>
+          )}
+        </div>
       </div>
     </div>
   )
