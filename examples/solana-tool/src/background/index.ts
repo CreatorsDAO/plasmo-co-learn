@@ -42,3 +42,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     sendResponse(sx)
   }
 })
+
+chrome.action.onClicked.addListener(async () => {
+  chrome.tabs.create({ url: "tabs/default.html" })
+})

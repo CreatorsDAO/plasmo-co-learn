@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 
 import { useStorage } from "@plasmohq/storage/hook"
 
-import { rpcUrl } from "./config"
+import { rpcUrl } from "../config"
 
 import "~style.css"
 
@@ -101,8 +101,8 @@ function IndexPopup() {
       <div className="plasmo-flex plasmo-m-2">
         <button
           className="plasmo-m-2 plasmo-flex plasmo-flex-row plasmo-items-center plasmo-px-4 plasmo-py-2 plasmo-text-sm plasmo-rounded-lg plasmo-transition-all plasmo-border-none
-      plasmo-shadow-lg hover:plasmo-shadow-md
-      active:plasmo-scale-105 plasmo-bg-indigo-500 hover:plasmo-bg-indigo-300 plasmo-text-slate-800 hover:plasmo-text-slate-900"
+        plasmo-shadow-lg hover:plasmo-shadow-md
+        active:plasmo-scale-105 plasmo-bg-indigo-500 hover:plasmo-bg-indigo-300 plasmo-text-slate-800 hover:plasmo-text-slate-900"
           onClick={airDrop}>
           Air Drop
         </button>
@@ -113,8 +113,8 @@ function IndexPopup() {
         <p className="plasmo-m-2">Value : {counter}</p>
         <button
           className="plasmo-m-2 plasmo-flex plasmo-flex-row plasmo-items-center plasmo-px-4 plasmo-py-2 plasmo-text-sm plasmo-rounded-lg plasmo-transition-all plasmo-border-none
-      plasmo-shadow-lg hover:plasmo-shadow-md
-      active:plasmo-scale-105 plasmo-bg-slate-50 hover:plasmo-bg-slate-100 plasmo-text-slate-800 hover:plasmo-text-slate-900"
+        plasmo-shadow-lg hover:plasmo-shadow-md
+        active:plasmo-scale-105 plasmo-bg-slate-50 hover:plasmo-bg-slate-100 plasmo-text-slate-800 hover:plasmo-text-slate-900"
           onClick={addCounter}>
           Add Counter
         </button>
