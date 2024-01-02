@@ -1,1 +1,0 @@
-https://mrc20.fun/
