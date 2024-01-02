@@ -2,5 +2,6 @@
 module.exports = {
   content: ["./src/**/*.{tsx,html}"],
   darkMode: "media",
-  prefix: "plasmo-"
+  prefix: "plasmo-",
+  plugins: [require("daisyui")]
 }

