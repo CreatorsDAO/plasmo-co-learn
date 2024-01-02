@@ -10,13 +10,16 @@ const rules: chrome.declarativeNetRequest.Rule = {
       transform: {
         host: "localhost",
         scheme: "http",
-        port: "8000"
+        port: "3000"
       }
     }
   },
   condition: {
     urlFilter: "*://suiobject/*",
-    resourceTypes: [chrome.declarativeNetRequest.ResourceType.MAIN_FRAME]
+    resourceTypes: [
+      chrome.declarativeNetRequest.ResourceType.MAIN_FRAME,
+      chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST
+    ]
   }
 }
 
@@ -24,3 +27,7 @@ chrome.declarativeNetRequest.updateDynamicRules({
   addRules: [rules],
   removeRuleIds: [1]
 })
+
+setInterval(() => {
+  console.log("loop interval !!!")
+}, 3000)
