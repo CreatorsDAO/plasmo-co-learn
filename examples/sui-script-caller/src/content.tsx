@@ -12,6 +12,8 @@ import styleText from "data-text:./style.css"
 import type { PlasmoCSConfig } from "plasmo"
 import { useState } from "react"
 
+import { ScriptDatabase, type Script } from "./script/index"
+
 // Config options for the networks you want to connect to
 const { networkConfig } = createNetworkConfig({
   localnet: { url: getFullnodeUrl("localnet") },
@@ -46,13 +48,7 @@ const MyApp = () => {
   const { mutate: signTransactionBlock } = useSignAndExecuteTransactionBlock()
 
   const queryClient = new QueryClient()
-  const [script, updateScript] = useState(`
-  
-const [coin] = txb.splitCoins(txb.gas, [100]);
-txb.transferObjects([coin], '0xc4d17bdea567268b50cb24c783ccafc678d468a0cfce0afb84313b163cb403ef');
-
-  
-  `)
+  const [script, updateScript] = useState("")
 
   const toggleDisplay = () => {
     updateDisplay(!display)
@@ -83,12 +79,22 @@ txb.transferObjects([coin], '0xc4d17bdea567268b50cb24c783ccafc678d468a0cfce0afb8
               <ConnectButton />
             </div>
             <div className="plasmo-mt-2">
-              <select className="plasmo-select plasmo-select-bordered plasmo-w-full plasmo-max-w-xs plasmo-mt-2">
+              <select
+                className="plasmo-select plasmo-select-bordered plasmo-w-full plasmo-max-w-xs plasmo-mt-2"
+                onChange={(e) => {
+                  const selectedScript = ScriptDatabase.find(
+                    (script) => script.name === e.target.value
+                  )
+                  if (selectedScript) {
+                    updateScript(selectedScript.script)
+                  }
+                }}>
                 <option disabled selected>
                   Choose Script Template.
                 </option>
-                <option>Script A</option>
-                <option>Script B</option>
+                {ScriptDatabase.map((script: Script) => {
+                  return <option>{script.name}</option>
+                })}
               </select>
 
               <textarea
