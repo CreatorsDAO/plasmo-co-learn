@@ -2,6 +2,7 @@ import {
   ConnectButton,
   createNetworkConfig,
   SuiClientProvider,
+  useCurrentAccount,
   useSignAndExecuteTransactionBlock,
   WalletProvider
 } from "@mysten/dapp-kit"
@@ -12,7 +13,8 @@ import styleText from "data-text:./style.css"
 import type { PlasmoCSConfig } from "plasmo"
 import { useState } from "react"
 
-import { ScriptDatabase, type Script } from "./script/index"
+import type { Script } from "~hooks/script"
+import { ScriptDatabase } from "~hooks/useScript"
 
 // Config options for the networks you want to connect to
 const { networkConfig } = createNetworkConfig({
@@ -21,7 +23,7 @@ const { networkConfig } = createNetworkConfig({
 })
 
 export const config: PlasmoCSConfig = {
-  matches: ["https://suiexplorer.com/*", "https://tailwindcss.com/*"],
+  matches: ["https://*/*"],
   world: "MAIN",
   run_at: "document_end"
 }
@@ -29,7 +31,17 @@ export const config: PlasmoCSConfig = {
 export const getRootContainer = () =>
   new Promise((resolve) => {
     const checkInterval = setInterval(() => {
-      const rootContainerParent = document.querySelector("header")
+      const querySelector = () => {
+        const host = window.location.host
+        const selectors = {
+          "suiexplorer.com": "main",
+          "tailwindcss.com": "div",
+          "omnilending.omnibtc.finance": "div"
+        }
+        return selectors[host] || "main"
+      }
+
+      const rootContainerParent = document.querySelector(querySelector())
       if (rootContainerParent) {
         clearInterval(checkInterval)
         const rootContainer = document.createElement("div")
@@ -46,7 +58,8 @@ export const getRootContainer = () =>
 const MyApp = () => {
   const [display, updateDisplay] = useState(false)
   const { mutate: signTransactionBlock } = useSignAndExecuteTransactionBlock()
-
+  const account = useCurrentAccount()
+  const [transction, setTransaction] = useState("xxxx")
   const queryClient = new QueryClient()
   const [script, updateScript] = useState("")
 
@@ -54,16 +67,19 @@ const MyApp = () => {
     updateDisplay(!display)
   }
 
-  const executeBlock = async () => {
+  const executeScript = async () => {
     const txb = new TransactionBlock()
+
     eval(script)
-    signTransactionBlock(
-      { transactionBlock: txb },
+    return signTransactionBlock(
+      { transactionBlock: txb, chain: account.chains[0] },
       {
         onSuccess: (data) => {
-          alert(data)
+          alert(JSON.stringify(data))
+          setTransaction(data.digest)
         },
         onError: (error) => {
+          console.log(error)
           alert(error)
         }
       }
@@ -71,15 +87,19 @@ const MyApp = () => {
   }
 
   return display ? (
-    <div className="plasmo-card plasmo-w-1/2  plasmo-bg-base-100 plasmo-shadow-xl plasmo-p-3 plasmo-mt-36 plasmo-z-50 plasmo-flex plasmo-fixed plasmo-top-32 plasmo-right-8">
+    <div className="plasmo-card plasmo-w-full  plasmo-bg-base-100 plasmo-shadow-xl plasmo-p-3 plasmo-z-50 plasmo-flex">
       <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig} defaultNetwork="localnet">
+        <SuiClientProvider networks={networkConfig}>
           <WalletProvider autoConnect={true}>
             <div>
               <ConnectButton />
+              {account && (
+                <span className="plasmo-ml-5">Chains: {account.chains}</span>
+              )}
             </div>
             <div className="plasmo-mt-2">
               <select
+                defaultValue={""}
                 className="plasmo-select plasmo-select-bordered plasmo-w-full plasmo-max-w-xs plasmo-mt-2"
                 onChange={(e) => {
                   const selectedScript = ScriptDatabase.find(
@@ -89,11 +109,13 @@ const MyApp = () => {
                     updateScript(selectedScript.script)
                   }
                 }}>
-                <option disabled selected>
-                  Choose Script Template.
-                </option>
+                <option value={""}>Choose Script Template.</option>
                 {ScriptDatabase.map((script: Script) => {
-                  return <option>{script.name}</option>
+                  return (
+                    <option value={script.name} key={script.name}>
+                      {script.name}
+                    </option>
+                  )
                 })}
               </select>
 
@@ -105,14 +127,18 @@ const MyApp = () => {
               />
               <button
                 className="plasmo-mt-3 plasmo-btn plasmo-btn-info"
-                onClick={executeBlock}>
-                Call Sui Script
+                onClick={executeScript}>
+                Execute Script
               </button>
               <button
                 className="plasmo-mt-3 plasmo-btn plasmo-btn-succ plasmo-ml-3"
                 onClick={toggleDisplay}>
                 Close Me!
               </button>
+
+              {transction ? (
+                <span className="plasmo-ml-3">{transction}</span>
+              ) : null}
             </div>
           </WalletProvider>
         </SuiClientProvider>
@@ -131,9 +157,9 @@ const PlasmoOverlay = () => {
   const queryClient = new QueryClient()
 
   return (
-    <div className="plasmo-fixed plasmo-top-32 plasmo-right-8">
+    <div className="plasmo-fixed plasmo-top-28 plasmo-right-8">
       <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig} defaultNetwork="localnet">
+        <SuiClientProvider networks={networkConfig} defaultNetwork="mainnet">
           <WalletProvider autoConnect={true}>
             <MyApp />
           </WalletProvider>
