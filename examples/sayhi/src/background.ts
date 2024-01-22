@@ -17,6 +17,13 @@ chrome.runtime.onConnect.addListener((port) => {
       switch (type) {
         case "echo":
           port.postMessage(message)
+          break
+        case "reverse":
+          port.postMessage({ type, msg: msg.split("").reverse().join("") })
+          break
+        default:
+          port.postMessage({ type, msg: "unknown type" })
+          break
       }
     })
   }

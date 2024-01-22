@@ -7,6 +7,11 @@ function IndexPopup() {
   const [cmd, updateCmd] = useState("")
   const port = chrome.runtime.connect({ name: "port.hi" })
 
+  port.onMessage.addListener((msg) => {
+    console.log("msg", msg)
+    updateMsg(JSON.stringify(msg))
+  })
+
   const clickMe = async () => {
     updateMsg("loading...")
 
@@ -16,11 +21,10 @@ function IndexPopup() {
   }
 
   const sendPort = async () => {
-    port.postMessage({ type: "echo", message: cmd })
-    port.onMessage.addListener((msg) => {
-      console.log("msg", msg)
-      updateMsg(JSON.stringify(msg))
-    })
+    const params = cmd.split(" ")
+    const myType = params.shift()
+
+    port.postMessage({ type: myType, msg: params.join(" ") })
   }
 
   return (
