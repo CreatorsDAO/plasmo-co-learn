@@ -1,9 +1,9 @@
 {
   "name": "web3note",
   "displayName": "Web3note",
-  "version": "0.0.5",
+  "version": "0.0.10",
   "description": "write note with every page on web3.",
-  "author": "Plasmo Corp. <foss@plasmo.com>",
+  "author": "v1xingyue<qixingyue@gmail.com>",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
@@ -15,6 +15,7 @@
     "plasmo": "0.84.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-toastify": "^10.0.4",
     "tailwindcss": "3.4.1",
     "viem": "^2.7.1"
   },
@@ -33,10 +34,6 @@
   "manifest": {
     "host_permissions": [
       "<all_urls>"
-    ],
-    "permissions":[ 
-      "activeTab",
-      "scripting"
     ]
   }
 }

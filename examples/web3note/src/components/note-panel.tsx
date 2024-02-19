@@ -4,28 +4,12 @@ import {
   createPublicClient,
   createWalletClient,
   custom,
-  defineChain,
   formatEther,
   type Address,
 } from "viem";
-
-export const Galileo = defineChain({
-  id: 3334,
-  name: "Galileo",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Web3Q",
-    symbol: "W3Q",
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://galileo.web3q.io:8545"],
-    },
-  },
-  blockExplorers: {
-    default: { name: "Explorer", url: "https://explorer.galileo.web3q.io" },
-  },
-});
+import { baseContract, gateway, networkId } from "~config";
+import { NoteLink, TransactionLink } from "./links";
+import { noteContract, Galileo } from "./web3";
 
 interface stopPropagationEvent {
   stopPropagation: () => void;
@@ -33,74 +17,6 @@ interface stopPropagationEvent {
 
 const stopPropagation = (e: stopPropagationEvent) => {
   e.stopPropagation();
-};
-
-const baseContract = "0xa4F872385A06B6C6d41c22b3e3720977B67cc792";
-const networkId = 3334;
-const gateway = "w3link.io";
-const noteContract = {
-  address: baseContract,
-  abi: [
-    {
-      inputs: [
-        {
-          internalType: "string",
-          name: "_key",
-          type: "string",
-        },
-      ],
-      name: "getNote",
-      outputs: [
-        {
-          internalType: "string",
-          name: "",
-          type: "string",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "name",
-      outputs: [
-        {
-          internalType: "string",
-          name: "",
-          type: "string",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [
-        {
-          internalType: "string",
-          name: "_key",
-          type: "string",
-        },
-        {
-          internalType: "string",
-          name: "_note",
-          type: "string",
-        },
-      ],
-      name: "setNote",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-  ],
-} as const;
-
-const NoteLink = ({ noteAddress }: { noteAddress: string }) => {
-  const url = `https://${baseContract}.${networkId}.${gateway}/note/string!${noteAddress}`;
-  return (
-    <a target="_blank" className="plasmo-link plasmo-link-primary" href={url}>
-      {noteAddress}
-    </a>
-  );
 };
 
 const NotePanel = () => {
@@ -112,6 +28,7 @@ const NotePanel = () => {
   const [blockNumber, setBlockNumber] = useState<string>("0");
   const [msg, updateMsg] = useState("");
   const [loading, updateLoading] = useState(false);
+  const [confirmWaiting, updateConfirmed] = useState(false);
 
   const client = createPublicClient({
     chain: Galileo,
@@ -134,6 +51,7 @@ const NotePanel = () => {
       new CustomEvent("Web3NoteLoadEvent", {
         detail: {
           url,
+          done: "Web3NoteLoadedEvent",
         },
       })
     );
@@ -176,15 +94,25 @@ const NotePanel = () => {
   }, [address]);
 
   const saveToWeb3 = async () => {
+    updateConfirmed(true);
     const { request } = await client.simulateContract({
       ...noteContract,
       functionName: "setNote",
       args: [noteAddress, msg],
       account: address,
     });
+
     const hash = await walletClient.writeContract(request);
     console.log(hash.toString());
     setTxHash(hash.toString());
+
+    await client.waitForTransactionReceipt({
+      hash,
+      confirmations: 2,
+    });
+
+    alert("🦄 updated!");
+    updateConfirmed(false);
   };
 
   return loading ? (
@@ -194,15 +122,12 @@ const NotePanel = () => {
       <div>
         <p>
           Address : <span className="plasmo-font-bold">{address}</span>{" "}
+          <span className="plasmo-font-bold">
+            {network}({blockNumber}){" "}
+          </span>
         </p>
         <p>
           Balance : <span className="plasmo-font-bold">{balance}</span>{" "}
-        </p>
-        <p>
-          Network :{" "}
-          <span className="plasmo-font-bold">
-            {network} {blockNumber}{" "}
-          </span>{" "}
         </p>
         <p>
           Note Hash :{" "}
@@ -220,27 +145,18 @@ const NotePanel = () => {
           stopPropagation(e);
         }}
         autoFocus={true}
-        className="plasmo-mt-4 plasmo-w-full plasmo-h-96 plasmo-p-2 plasmo-text-sm plasmo-text-gray-700 plasmo-border plasmo-border-gray-300 plasmo-rounded-md "
+        className="plasmo-mt-4 plasmo-w-full plasmo-h-28 plasmo-p-2 plasmo-text-sm plasmo-text-gray-700 plasmo-border plasmo-border-gray-300 plasmo-rounded-md "
         placeholder="Bio"
       ></textarea>
       <div>
         <button className="plasmo-btn plasmo-btn-info" onClick={saveToWeb3}>
-          Save Note To Web3
+          Save Note To Web3{" "}
+          {confirmWaiting ? (
+            <span className="plasmo-ml-3 plasmo-loading plasmo-loading-infinity plasmo-loading-lg"></span>
+          ) : null}
         </button>
-        <p className="plasmo-mt-2">
-          {txHash == "" ? (
-            ""
-          ) : (
-            <a
-              className="plasmo-font-bold plasmo-link plasmo-link-primary plasmo-text-sm plasmo-underline "
-              href={`https://explorer.galileo.web3q.io/tx/${txHash}`}
-              target="_blank"
-            >
-              Transaction : {txHash}
-            </a>
-          )}
-        </p>
       </div>
+      <TransactionLink txHash={txHash} />
     </div>
   );
 };

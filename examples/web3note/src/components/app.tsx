@@ -13,7 +13,7 @@ const App = () => {
 
   return display ? (
     <QueryClientProvider client={queryClient}>
-      <div className="plasmo-card plasmo-bg-base-200 plasmo-shadow-xl plasmo-w-1/2 plasmo-h-5/6 plasmo-fixed plasmo-top-5 plasmo-right-5">
+      <div className="plasmo-card plasmo-bg-base-200 plasmo-shadow-xl plasmo-w-1/2 plasmo-fixed plasmo-top-5 plasmo-right-0">
         <div className="plasmo-card-body">
           <div className="plasmo-card-actions plasmo-justify-end">
             <button
@@ -41,10 +41,10 @@ const App = () => {
       </div>
     </QueryClientProvider>
   ) : (
-    <div className="plasmo-float-end plasmo-fixed plasmo-top-28 plasmo-right-3">
+    <div className="plasmo-float-end plasmo-fixed plasmo-top-28 plasmo-right-0">
       <button
         onClick={toggleDisplay}
-        className="plasmo-btn plasmo-btn-primary plasmo-mt-2"
+        className="plasmo-btn plasmo-btn-success plasmo-mt-2"
       >
         Web3Note
       </button>
