@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkplasmo_co_learn=self.webpackChunkplasmo_co_learn||[]).push([[6136],{5008:a=>{a.exports=JSON.parse('{"label":"facebook","permalink":"/plasmo-co-learn/blog/tags/facebook","allTagsPath":"/plasmo-co-learn/blog/tags","count":1,"unlisted":false}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkplasmo_co_learn=self.webpackChunkplasmo_co_learn||[]).push([[7694],{8109:e=>{e.exports=JSON.parse('{"permalink":"/plasmo-co-learn/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
