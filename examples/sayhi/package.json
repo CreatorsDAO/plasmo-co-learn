@@ -1,7 +1,7 @@
 {
   "name": "sayhi",
   "displayName": "Sayhi",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "A basic Plasmo extension.",
   "author": "Plasmo Corp. <foss@plasmo.com>",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "daisyui": "^4.6.0",
-    "plasmo": "0.84.0",
+    "plasmo": "0.84.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.5"
@@ -29,9 +29,6 @@
   "manifest": {
     "host_permissions": [
       "https://*/*"
-    ],
-    "permissions":[
-      
     ]
   }
 }
