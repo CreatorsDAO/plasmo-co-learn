@@ -13,10 +13,16 @@
 
 ## module1
 
+Plasmo 介绍
+熟悉浏览器扩展和Plasmo、搭建开发环境、及其简单的React入门。
+
 1. 环境搭建，浏览器扩展各个模块
 2. 前端 React 基础
 
 ## module2
+
+浏览器扩展页面
+熟悉浏览器扩展各个页面的开发、掌握独立交互扩展的构建能力。
 
 1. 开发工作流
 2. extension pages (tab page, popup page, option page, new tab page, devtool)
@@ -25,10 +31,16 @@
 
 ## module3
 
+内容脚本
+熟悉在页面当中嵌入脚本和UI组件。
+
 1. content scripts
 2. content scripts ui
 
 ## module4
+
+模块间通信
+掌握模块(background、content pages、popup page)间通信的技巧, 
 
 1. background sw
 2. message
