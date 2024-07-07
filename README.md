@@ -57,9 +57,9 @@ Plasmo 介绍
 
 参考资料：
 
-1. plasmo 官方文档 <https://docs.plasmo.com/>
-2. 使用 plasmo的参考示例<https://github.com/PlasmoHQ/examples/> 
-3. google Chrome 模块开发文档 <https://developer.chrome.com/docs/extensions/mv3/>
-4. 火狐浏览器扩展开发文档 <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions>
-5. 像素风格 UI 类库 <https://github.com/nostalgic-css/NES.css>
-6. chrome 官方扩展实例 <https://github.com/GoogleChrome/chrome-extensions-samples/tree/main/api-samples>
+1. [plasmo 官方文档](https://docs.plasmo.com/)
+2. [使用 plasmo的参考示例](https://github.com/PlasmoHQ/examples/) 
+3. [Google Chrome 模块开发文档](https://developer.chrome.com/docs/extensions/mv3/)
+4. [火狐浏览器扩展开发文档](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/)
+5. [像素风格 UI 类库](https://github.com/nostalgic-css/NES.css)
+6. [chrome 官方扩展实例](https://github.com/GoogleChrome/chrome-extensions-samples/tree/main/api-samples)
