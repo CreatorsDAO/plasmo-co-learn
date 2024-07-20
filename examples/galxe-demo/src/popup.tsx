@@ -31,7 +31,7 @@ export default function IndexPopup() {
           target="_blank"
           rel="noreferrer"
           className="font-medium underline underline-offset-4">
-          shadcn
+          CreatorsDAO
         </a>
       </div>
     </div>
