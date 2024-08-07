@@ -40,6 +40,18 @@ sidebar_position: 4
 
 [参考示例 with-newtab](https://github.com/PlasmoHQ/examples/tree/main/with-newtab)
 
+### Side Panel Page
+
+侧面板允许扩展在侧面板中显示自己的UI，从而实现用户在不同标签页之间导航时可以保持打开状态，成为一个持久的用户界面元素。
+
+:::warning
+这个特性不能保证在基于 Chromium 的所有浏览器上完美工作，比如 Arc 无法使用，Brave 某些状况无法关闭。
+:::
+
+创建一个sidepanel.tsx文件或一个sidepanel/index.tsx文件，Plasmo将负责其余的工作，以在侧面板中呈现UI。
+
+[参考示例 with-sidepanel](https://github.com/PlasmoHQ/examples/tree/main/with-sidepanel)
+
 ### Dev Tools Page
 
 这个页面会在浏览器调试 Panel 中展示。
